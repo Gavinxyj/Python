@@ -21,7 +21,7 @@ class Singleton():
                 Singleton.instance = Singleton()
             Singleton.mutex.release()
         return Singleton.instance
-    #获取数据库连接
+    #get db connection
     def getConnection(self):
         try:
             if (conn == None):
