@@ -26,6 +26,7 @@ class Singleton():
         try:
             if (conn == None):
                 conn = MySQLdb.connect(self.host, self.user, self.passwd, self.db, 'utf8')
+                print conn
                 return conn.cursor()
             else:
                 return conn.cursor()
