@@ -9,6 +9,7 @@ class Singleton(object):
     user     = None
     passwd   = None
     db       = None
+    port		 = None
     mutex=threading.Lock()
 
     def _init__(self):
@@ -24,18 +25,18 @@ class Singleton(object):
     #get db connection
     def getConnection(self):
         try:
-            if (conn == None):
-                conn = MySQLdb.connect(self.host, self.user, self.passwd, self.db, 'utf8')
-                print conn
-                return conn.cursor()
+            if (self.conn == None):
+                self.conn = MySQLdb.connect(host=self.host ,port=self.port,user=self.user,passwd=self.passwd,db=self.db,charset='utf8')
+                return self.conn.cursor()
             else:
-                return conn.cursor()
+                return self.conn.cursor()
         except MySQLdb.Error,e:
             print "Mysql Error %d: %s" % (e.args[0], e.args[1])
 
-    def setConnection(host, user, passwd, db):
+    def setConnection(self, host, port, user, passwd, db):
         self.host   = host
         self.user   = user
+        self.port		= port
         self.passwd = passwd
         self.db     = db
 
@@ -47,8 +48,9 @@ class Singleton(object):
         except MySQLdb.Error,e:
             print "Mysql Error %d: %s" % (e.args[0], e.args[1])
 
-if __name__ == 'main':
-    print 'hello world'
-    #Singleton.setConnection(localhost, root, 123456, python)
-    #Singleton.getInstance().setConnection(localhost, root, 123456, python)
-    #Singleton.getInstance().getConnection()
+if __name__ == '__main__':
+    #print 'hello world'
+    #Singleton.setConnection('localhost', 'root', 123456, 'python')
+    Singleton.getInstance().setConnection('localhost', 3306, 'root', '123456', 'python')
+    Singleton.getInstance().getConnection()
+    Singleton.getInstance().getConnection()
