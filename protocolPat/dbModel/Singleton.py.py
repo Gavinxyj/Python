@@ -48,4 +48,5 @@ class Singleton():
             print "Mysql Error %d: %s" % (e.args[0], e.args[1])
 
 if __name__ == 'main':
-    Singleton.setConnection(localhost, root, 123456, python)
+    Singleton.getInstance().setConnection(localhost, root, 123456, python)
+    Singleton.getInstance().getConnection()
