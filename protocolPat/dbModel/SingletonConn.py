@@ -1,7 +1,9 @@
 import threading
 import MySQLdb
+import logging.config
 
-
+logging.config.fileConfig('./config/logging.conf')
+logger = logging.getLogger("simpleExample")
 class Singleton(object):
     instance = None
     conn     = None
@@ -27,6 +29,7 @@ class Singleton(object):
         try:
             if (self.conn == None):
                 self.conn = MySQLdb.connect(host=self.host ,port=self.port,user=self.user,passwd=self.passwd,db=self.db,charset='utf8')
+                logger.debug(self.conn)
                 return self.conn.cursor()
             else:
                 return self.conn.cursor()
@@ -36,7 +39,7 @@ class Singleton(object):
     def setConnection(self, host, port, user, passwd, db):
         self.host   = host
         self.user   = user
-        self.port		= port
+        self.port   = port
         self.passwd = passwd
         self.db     = db
 
