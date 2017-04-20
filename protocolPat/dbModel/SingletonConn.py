@@ -1,9 +1,8 @@
 import threading
 import MySQLdb
-import logging.config
+from logConfig import logger
 
-logging.config.fileConfig('./config/logging.conf')
-logger = logging.getLogger("simpleExample")
+
 class Singleton(object):
     instance = None
     conn     = None
