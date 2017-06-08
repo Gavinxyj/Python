@@ -1,58 +1,56 @@
 import threading
 import MySQLdb
-from logConfig import logger
-
+from logConfig.LoggingConfig import logger
 
 class Singleton(object):
     instance = None
-    conn     = None
-    host     = None
-    user     = None
-    passwd   = None
-    db       = None
-    port		 = None
-    mutex=threading.Lock()
+    conn = None
+    host = None
+    user = None
+    passwd = None
+    db = None
+    port = None
+    mutex = threading.Lock()
 
     def _init__(self):
         pass
+
     @staticmethod
-    def getInstance():
-        if(Singleton.instance == None):
+    def get_instance():
+        if Singleton.instance is None:
             Singleton.mutex.acquire()
-            if(Singleton.instance == None):
+            if Singleton.instance is None:
                 Singleton.instance = Singleton()
             Singleton.mutex.release()
         return Singleton.instance
-    #get db connection
-    def getConnection(self):
+
+    # get db connection
+    def get_connection(self):
         try:
-            if (self.conn == None):
-                self.conn = MySQLdb.connect(host=self.host ,port=self.port,user=self.user,passwd=self.passwd,db=self.db,charset='utf8')
+            if self.conn is None:
+                self.conn = MySQLdb.connect(host=self.host, port=self.port, user=self.user, passwd=self.passwd, db=self.db, charset='utf8')
                 logger.debug(self.conn)
                 return self.conn.cursor()
             else:
                 return self.conn.cursor()
-        except MySQLdb.Error,e:
-            print "Mysql Error %d: %s" % (e.args[0], e.args[1])
+        except MySQLdb.Error, e:
+            logger.error("Mysql Error %d: %s" % (e.args[0], e.args[1]))
 
-    def setConnection(self, host, port, user, passwd, db):
-        self.host   = host
-        self.user   = user
-        self.port   = port
+    def set_connection(self, host, port, user, passwd, db):
+        self.host = host
+        self.user = user
+        self.port = port
         self.passwd = passwd
-        self.db     = db
+        self.db = db
 
-    def closeConnection(self):
+    def close_connection(self):
         try:
-            if (self.conn != None):
+            if self.conn is not None:
                 self.conn.cursor.close()
                 self.conn.close()
-        except MySQLdb.Error,e:
-            print "Mysql Error %d: %s" % (e.args[0], e.args[1])
+        except MySQLdb.Error, e:
+            logger.error("Mysql Error %d: %s" % (e.args[0], e.args[1]))
 
 if __name__ == '__main__':
-    #print 'hello world'
-    #Singleton.setConnection('localhost', 'root', 123456, 'python')
-    Singleton.getInstance().setConnection('localhost', 3306, 'root', '123456', 'python')
-    Singleton.getInstance().getConnection()
-    Singleton.getInstance().getConnection()
+    Singleton.get_instance().set_connection('localhost', 3306, 'root', '123456', 'python')
+    Singleton.get_instance().get_connection()
