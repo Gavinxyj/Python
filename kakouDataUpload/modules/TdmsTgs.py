@@ -8,9 +8,9 @@
 
 import cx_Oracle
 import logging.config
-from database.Connectino import Connection
+from database.Connection import Connection
 
-logging.config.fileConfig('../config/logging.conf')
+logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
 
 
@@ -23,13 +23,14 @@ class TdmsTgs(object):
     def get_record():
         try:
             conn = Connection.get_conn('yunwei')
-            cursor = conn.cursor()
-            cursor.execute(TdmsTgs.querySql)
-            result = cursor.fetchall()
-            for item in result:
-                TdmsTgs.mapdata[item[0]] = item[1]
+            if conn is not None:
+                cursor = conn.cursor()
+                cursor.execute(TdmsTgs.querySql)
+                result = cursor.fetchall()
+                for item in result:
+                    TdmsTgs.mapdata[item[0]] = item[1]
 
-            cursor.close()
+                cursor.close()
         except cx_Oracle.Error, e:
             conn.close()
             logger.error('Oracle Error: %d %s' % (e.args[0], e.args[1]))

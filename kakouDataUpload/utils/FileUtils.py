@@ -11,7 +11,7 @@ import os.path
 import shutil
 import logging.config
 
-logging.config.fileConfig('../config/logging.conf')
+logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
 
 
@@ -35,6 +35,7 @@ class FileUtils(object):
             for filename in files:
                 fileTime = os.path.getmtime(os.path.join(parentdir, filename))
                 if fileTime >= scanTime:
+                    logger.debug('filename = %s' % os.path.join(parentdir, filename))
                     array_list.append(os.path.join(parentdir, filename))
         return array_list
 

@@ -8,14 +8,14 @@
 
 import cx_Oracle
 import logging.config
-logging.config.fileConfig('../config/logging.conf')
+logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
 
 
 class Connection(object):
 
     connMgr = {}
-    connParams = None
+    connParams = {}
 
     def __init__(self, conParams):
         self.connParams = conParams
@@ -38,3 +38,5 @@ class Connection(object):
 
         except cx_Oracle.Error, e:
             logger.error('cx_Oralce Error : %s' % (e.args[0], e.args[1]))
+
+        return None

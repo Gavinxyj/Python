@@ -7,16 +7,14 @@
 # @file     CarInfo
 
 import os, os.path
+import json
 import time
 import logging.config
 from utils.TimeUtils import TimeUtils
-logging.config.fileConfig('../config/logging.conf')
+logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
 
 class CarInfo(object):
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def parser_format(arrayData, mapData):
@@ -31,10 +29,13 @@ class CarInfo(object):
             if len(values) < 12:
                 logger.error('this file is illegal, this file name is ' % fileName)
             # 卡口编号
+            info['kkbh'] = values[0]
+            '''
             if values[0] in mapData.keys:
                 info['kkbh'] = mapData[values[0]]
             else:
                 continue
+            '''
             # 车辆通过时间
             info['tgsj'] = TimeUtils.convert_time_format(values[1], '%Y%m%d%H%M%S%f', '%Y-%m-%d %H:%M:%S %f')
             # 号牌号码
@@ -66,5 +67,5 @@ class CarInfo(object):
             # 车辆特征图像3
             info['tplj3'] = ''
 
-            data.append(info)
+            data.append(info, ensure_ascii=False)
         return data
