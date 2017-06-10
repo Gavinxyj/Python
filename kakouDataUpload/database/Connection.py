@@ -31,7 +31,7 @@ class Connection(object):
 
             if strType in Connection.connParams.keys():
                 values = Connection.connParams[strType]
-                dsn = cx_Oracle.makedsn(values['ip'], int(values['port']), values['sid']).replace('SID', 'SERVICE_NAME')
+                dsn = cx_Oracle.makedsn(values['url'], int(values['port']), values['sid']).replace('SID', 'SERVICE_NAME')
                 conn = cx_Oracle.connect(values['username'], values['password'], dsn)
                 Connection.connMgr[strType] = conn
                 return conn

@@ -14,6 +14,6 @@ class KafkaImpl(object):
         self.producer = KafkaProducer(bootstrap_servers=args['url'])
         self.topic = args['topic']
 
-    def set_message(self, msg):
+    def send_message(self, msg):
         self.producer.send(self.topic, msg)
-        self.producer.flush()
+

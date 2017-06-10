@@ -11,6 +11,7 @@ import os.path
 import shutil
 import logging.config
 
+from modules.FileStatusMonitor import EventHandler
 logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
 
@@ -33,10 +34,14 @@ class FileUtils(object):
         array_list = []
         for parentdir, dirs, files in os.walk(path):
             for filename in files:
+                if os.path.join(parentdir, filename) in EventHandler.createdFile:
+                    continue
+
                 fileTime = os.path.getmtime(os.path.join(parentdir, filename))
                 if fileTime >= scanTime:
                     logger.debug('filename = %s' % os.path.join(parentdir, filename))
                     array_list.append(os.path.join(parentdir, filename))
+
         return array_list
 
     '''
