@@ -54,7 +54,6 @@ class FileUtils(object):
         try:
             for parentdir, dirs, files in os.walk(path):
                 for fileName in files:
-                    print fileName
                     fileTime = os.path.getmtime(os.path.join(parentdir, fileName))
                     if fileTime < delTime:
                         os.remove(os.path.join(parentdir, fileName))
@@ -66,5 +65,3 @@ class FileUtils(object):
         except OSError, e:
             logger.error("OSError %d: %s" % (e.args[0], e.args[1]))
 
-if __name__ == '__main__':
-    print '%02d' % int('1')

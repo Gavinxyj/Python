@@ -9,9 +9,8 @@
 import os
 from  pyinotify import WatchManager, Notifier, \
     ProcessEvent, IN_DELETE, IN_CREATE, IN_MODIFY
-import logging.config
-logging.config.fileConfig('config/logging.conf')
-logger = logging.getLogger("kakou")
+import logging
+logger = logging.getLogger("kakou.modules")
 
 
 class EventHandler(ProcessEvent):
@@ -24,12 +23,13 @@ class EventHandler(ProcessEvent):
         if not self.bFlag:
             filename = os.path.join(event.path, event.name)
             self.createdFile[filename] = 1
-        
+
 
     def process_IN_DELETE(self, event):
         logger.debug('Delete file: %s' % os.path.join(event.path, event.name))
 
-    def file_monitor(self, path='.'):
+    @staticmethod
+    def file_monitor(path='.'):
         wm = WatchManager()
         mask = IN_DELETE | IN_CREATE | IN_MODIFY
         notifier = Notifier(wm, EventHandler())

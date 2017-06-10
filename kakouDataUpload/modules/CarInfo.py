@@ -11,8 +11,10 @@ import json
 import time
 import logging.config
 from utils.TimeUtils import TimeUtils
+
 logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
+
 
 class CarInfo(object):
 
@@ -30,14 +32,14 @@ class CarInfo(object):
                 logger.error('this file is illegal, this file name is ' % fileName)
             # 卡口编号
             info['kkbh'] = values[0]
-            '''
-            if values[0] in mapData.keys:
+
+            if values[0] in mapData.keys():
                 info['kkbh'] = mapData[values[0]]
             else:
                 continue
-            '''
+
             # 车辆通过时间
-            info['tgsj'] = TimeUtils.convert_time_format(values[1], '%Y%m%d%H%M%S%f', '%Y-%m-%d %H:%M:%S %f')
+            info['tgsj'] = TimeUtils.convert_time_format(values[1], '%Y%m%d%H%M%S', '%Y-%m-%d %H:%M:%S')
             # 号牌号码
             if values[2] == '-':
                 info['hphm'] = '未识别'
@@ -66,6 +68,6 @@ class CarInfo(object):
             info['tplj2'] = ''
             # 车辆特征图像3
             info['tplj3'] = ''
-
-            data.append(info, ensure_ascii=False)
+            strjson = json.dumps(info, ensure_ascii=False)
+            data.append(strjson)
         return data

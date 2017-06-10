@@ -10,7 +10,7 @@ from rediscluster import StrictRedisCluster
 
 class RedisImpl(object):
 
-    def __init__(self, *args):
+    def __init__(self, args):
         self.conn = StrictRedisCluster(startup_nodes=args, decode_responses=True)
 
     def getkey(self, key):

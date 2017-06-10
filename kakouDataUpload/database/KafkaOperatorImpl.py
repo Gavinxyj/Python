@@ -7,7 +7,6 @@
 
 from kafka import KafkaProducer
 
-
 class KafkaImpl(object):
 
     def __init__(self, args):

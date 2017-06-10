@@ -4,24 +4,22 @@
 # @time     2017/6/6 0006 9:07
 # @project  Python
 # @file     run
+import sys
+import logging.config
+from modules.Scheduler import Scheduler
 
-from utils.FileUtils import FileUtils
-from modules.CarInfo import CarInfo
-from modules.TdmsTgs import TdmsTgs
-from database.RedisOperatorImpl import RedisImpl
-import time
+default_encoding = 'utf-8'
+if sys.getdefaultencoding() != default_encoding:
+    reload(sys)
+    sys.setdefaultencoding(default_encoding)
+
+logging.config.fileConfig('config/logging.conf')
+logger = logging.getLogger("kakou")
+
+import modules
 
 if __name__ == '__main__':
+    scheduler = Scheduler()
+    scheduler.do_scheduler()
 
-    startup_nodes = [{'host': '13.53.147.233', 'port': '6379'},
-                     {'host': '13.53.147.233', 'port': '6380'},
-                     {'host': '13.53.147.235', 'port': '6381'}]
-    redis = RedisImpl(*startup_nodes)
-
-    print redis.getkey('scanPoint')
-
-   # listdata = FileUtils.scan_file('/data/source', time.time() - 10 * 60)
-
-   # TdmsTgs.get_record()
-
-   # CarInfo.parser_format(listdata, TdmsTgs.mapdata)
+    print 'main thread exit'

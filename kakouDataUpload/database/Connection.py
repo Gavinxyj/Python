@@ -14,26 +14,26 @@ logger = logging.getLogger("kakou")
 
 class Connection(object):
 
-    connMgr = {}
-    connParams = {}
-
-    def __init__(self, conParams):
-        self.connParams = conParams
-
-    # 获取数据库连接
+    _connParams = None
+    _connMgr = {}
 
     @staticmethod
+    def init_conn(params):
+        Connection._connParams = params
+    # 获取数据库连接
+    @staticmethod
     def get_conn(strType):
+        cont = Connection._connParams
         try:
-            if strType in Connection.connMgr:
-                if Connection.connMgr[strType] is not None:
-                    return Connection.connMgr
+            if strType in Connection._connMgr:
+                if Connection._connMgr[strType] is not None:
+                    return Connection._connMgr
 
-            if strType in Connection.connParams.keys():
-                values = Connection.connParams[strType]
-                dsn = cx_Oracle.makedsn(values['url'], int(values['port']), values['sid']).replace('SID', 'SERVICE_NAME')
+            if strType in Connection._connParams.keys():
+                values = Connection._connParams[strType]
+                dsn = cx_Oracle.makedsn(values['url'], values['port'], values['sid']).replace('SID', 'SERVICE_NAME')
                 conn = cx_Oracle.connect(values['username'], values['password'], dsn)
-                Connection.connMgr[strType] = conn
+                Connection._connMgr[strType] = conn
                 return conn
 
         except cx_Oracle.Error, e:
