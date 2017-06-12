@@ -7,9 +7,8 @@
 # @file     connection
 
 import cx_Oracle
-import logging.config
-logging.config.fileConfig('config/logging.conf')
-logger = logging.getLogger("kakou")
+import logging
+logger = logging.getLogger("kakou.database")
 
 
 class Connection(object):
@@ -20,14 +19,15 @@ class Connection(object):
     @staticmethod
     def init_conn(params):
         Connection._connParams = params
+
     # 获取数据库连接
     @staticmethod
     def get_conn(strType):
-        cont = Connection._connParams
+        conn = Connection._connParams
         try:
             if strType in Connection._connMgr:
                 if Connection._connMgr[strType] is not None:
-                    return Connection._connMgr
+                    return Connection._connMgr[strType]
 
             if strType in Connection._connParams.keys():
                 values = Connection._connParams[strType]

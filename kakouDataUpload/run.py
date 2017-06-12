@@ -15,9 +15,6 @@ if sys.getdefaultencoding() != default_encoding:
 
 logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
-
-import modules
-
 if __name__ == '__main__':
     scheduler = Scheduler()
     scheduler.do_scheduler()

@@ -7,18 +7,15 @@
 # @file     ZkConfig
 
 import zookeeper
-import logging.config
+import logging
 
-logging.config.fileConfig('config/logging.conf')
-logger = logging.getLogger("kakou")
+logger = logging.getLogger("kakou.utils")
 
 
 class ZkConfig(object):
 
     def __init__(self, conn):
-        print conn
         self.zk = zookeeper.init(conn)
-        print self.zk
 
     def get_data(self, path):
         if zookeeper.exists(self.zk, path):
@@ -26,3 +23,6 @@ class ZkConfig(object):
         else:
             logger.error('path is not exists, please check it')
             return None
+
+    def close(self):
+        zookeeper.close(self.zk)

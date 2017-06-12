@@ -4,8 +4,9 @@
 # @time     2017/6/7 0007 11:38
 # @project  Python
 # @file     KafkaOperatorImpl
-
+import logging
 from kafka import KafkaProducer
+logger = logging.getLogger("kakou.database")
 
 class KafkaImpl(object):
 
@@ -14,5 +15,11 @@ class KafkaImpl(object):
         self.topic = args['topic']
 
     def send_message(self, msg):
-        self.producer.send(self.topic, msg)
+        try:
+            if msg:
+                self.producer.send(self.topic, bytes(msg))
+        except Exception, e:
+            logger.error('kafka send msg error, msg : %s error: %s' % (msg, e.message))
 
+    def close(self):
+        self.producer.close()

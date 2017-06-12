@@ -9,11 +9,11 @@
 import os
 import os.path
 import shutil
-import logging.config
+import logging
 
 from modules.FileStatusMonitor import EventHandler
-logging.config.fileConfig('config/logging.conf')
-logger = logging.getLogger("kakou")
+
+logger = logging.getLogger("kakou.utils")
 
 
 class FileUtils(object):
@@ -24,7 +24,9 @@ class FileUtils(object):
             path = os.path.split(desdir)
             if not os.path.exists(path[0]):
                 os.makedirs(path[0])
-            shutil.copy(srcfile, desdir)
+
+            if os.path.exists(srcfile):
+                shutil.copy(srcfile, desdir)
         except shutil.Error, e:
             logger.error("shutil.Error %d: %s" % (e.args[0], e.args[1]))
 
@@ -35,6 +37,7 @@ class FileUtils(object):
         for parentdir, dirs, files in os.walk(path):
             for filename in files:
                 if os.path.join(parentdir, filename) in EventHandler.createdFile:
+                    print os.path.join(parentdir, filename)
                     continue
 
                 fileTime = os.path.getmtime(os.path.join(parentdir, filename))

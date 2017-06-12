@@ -7,10 +7,9 @@
 
 import os
 import time, datetime
-import logging.config
+import logging
 
-logging.config.fileConfig('../config/logging.conf')
-logger = logging.getLogger("kakou")
+logger = logging.getLogger("kakou.utils")
 class TimeUtils(object):
 
     @staticmethod
@@ -39,6 +38,15 @@ class TimeUtils(object):
         except Exception, e:
             logger.error('time format convert error %s' % e.message)
             return None
-if __name__ == '__main__':
 
+    @staticmethod
+    def get_format_time(longtime, time_format):
+        try:
+            if longtime and time_format:
+                return time.strftime(time_format, time.localtime(longtime)) + ' 000'
+        except Exception, e:
+            logger.error('time format convert error %s' % e.message)
+            return None
+if __name__ == '__main__':
+    os.path.getmtime(f)
     print TimeUtils.convert_time_format('20170607203802123', '%Y%m%d%H%M%S', '%Y-%m-%d %H:%M:%S')

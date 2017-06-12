@@ -7,7 +7,8 @@
 # @file     Scheduler
 
 
-import logging.config
+import logging
+import os
 import pdb
 import sys, signal, time
 import json
@@ -22,21 +23,34 @@ from CarInfo import CarInfo
 from TdmsTgs import TdmsTgs
 from database.KafkaOperatorImpl import KafkaImpl
 from database.RedisOperatorImpl import RedisImpl
-
-logging.config.fileConfig('config/logging.conf')
-logger = logging.getLogger("kakou")
+from FrmStatus import FrmStatus
+from RoadInfo import RoadInfo
+logger = logging.getLogger("kakou.modules")
 
 
 class Scheduler(object):
 
     def __init__(self):
+        args = {}
         self.is_exit = False
         self.zkObj = ZkConfig(ZOOKEEPER_ADDR)
         self.jsonObj = self.get_zkconfig()
         self.redis = RedisImpl(self.jsonObj['kakouFilter']['redis-cluster']['startup_nodes'])
+        # 实例化kafka连接
+        self.kafkaConn = KafkaImpl(self.jsonObj['kakouFilter']['kafka'])
+        args['fileutils'] = FileUtils
+        args['jsonobj'] = self.jsonObj
+        args['carinfo'] = CarInfo
+        args['kafkaconn'] = self.kafkaConn
+        args['tdmstgs'] = TdmsTgs
+        args['redis'] = self.redis
+        args['timeutils'] = TimeUtils
+        EventHandler.init_params(**args)
 
     def handler(self, signum, frame):
         self.is_exit = True
+        self.zkObj.close()
+        self.kafkaConn.close()
         print 'receive a signal %d, is_exit = %d ' % (signum, self.is_exit)
         logger.info('receive a signal %d, is_exit = %d ' % (signum, self.is_exit))
         sys.exit()
@@ -49,8 +63,16 @@ class Scheduler(object):
         Connection.init_conn(self.jsonObj['kakouFilter'])
 
         # 从运维数据库获取卡口编号与路口编号映射关系
-        TdmsTgs.get_record()
 
+        TdmsTgs.get_record()
+        # 取二期卡口的字段记录
+        pdb.set_trace()
+        FrmStatus.get_all_record()
+        # 去二期卡口的道路信息
+        RoadInfo.get_all_record()
+        print FrmStatus.data
+        print '========================='
+        print RoadInfo.mapdata
         # start file monitor
         # EventHandler.file_monitor(self.jsonObj['kakouFilter']['listenPath'])
 
@@ -98,10 +120,14 @@ class Scheduler(object):
 
     def del_file_by_time(self):
         while True:
+            time.sleep(60)
+            logger.info('delete file thread start')
             curTime = time.time()
             path = self.jsonObj['kakouFilter']['listenPath']
             deleteTime = self.jsonObj['kakouFilter']['deleteTime']
             FileUtils.del_file(path, curTime - deleteTime * 60 * 60)
+            logger.info('delete file thread end')
+
 
     def scan_file(self, path, scantime):
 
@@ -109,17 +135,19 @@ class Scheduler(object):
         # 转换数据格式
         kafkaInfo = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
 
-        # 实例化kafka连接
-        kafkaConn = KafkaImpl(self.jsonObj['kakouFilter']['kafka'])
-
         # 将转换后的消息发送到kafka队列里
-
         for item in kafkaInfo:
             logger.debug('strJson = %s' % item)
-            # kafkaConn.send_message(item)
+            self.kafkaConn.send_message(item)
 
-        kafkaConn.producer.flush()
+        self.kafkaConn.producer.flush()
 
+        for item in array_list:
+            filename = os.path.split(item)[1]
+            if filename:
+                dest_dir = CarInfo.dest_dir_format(filename)
+                if dest_dir:
+                    FileUtils.copy_file(item, self.jsonObj['kakouFilter']['destDir'] + '/' + dest_dir)
         EventHandler.bFlag = True
         EventHandler.createdFile.clear()
 

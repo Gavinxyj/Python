@@ -9,11 +9,10 @@
 import os, os.path
 import json
 import time
-import logging.config
+import logging
 from utils.TimeUtils import TimeUtils
 
-logging.config.fileConfig('config/logging.conf')
-logger = logging.getLogger("kakou")
+logger = logging.getLogger("kakou.modules")
 
 
 class CarInfo(object):
@@ -28,10 +27,17 @@ class CarInfo(object):
 
             values = fileName.split('_')
 
+            if values[len(values) - 1] == '2.jpg':
+                continue
+
             if len(values) < 12:
                 logger.error('this file is illegal, this file name is ' % fileName)
+
+            # id
+            info['id'] = ''
+
             # 卡口编号
-            info['kkbh'] = values[0]
+            info['kkbh'] = values[0][:-3] + '000'
 
             if values[0] in mapData.keys():
                 info['kkbh'] = mapData[values[0]]
@@ -46,7 +52,7 @@ class CarInfo(object):
             else:
                 info['hphm'] = values[2]
 
-            #车辆通行状态
+            # 车辆通行状态
             if values[8] == '0':
                 info['cltxzt'] = '1'
             else:
@@ -68,6 +74,34 @@ class CarInfo(object):
             info['tplj2'] = ''
             # 车辆特征图像3
             info['tplj3'] = ''
+
             strjson = json.dumps(info, ensure_ascii=False)
             data.append(strjson)
         return data
+
+    @staticmethod
+    def dest_dir_format(filename):
+        try:
+            if filename:
+                values = filename.split('_')
+                date = values[1][:8]
+                kkbh = values[0]
+                xsfx = values[7]
+                cphm = values[2]
+                if cphm == '-':
+                    cphm = '000'
+                else:
+                    for item in cphm[::-1]:
+                        if item.isdigit():
+                            cphm = item
+                            break
+
+                # 处理后图片存放规则：日期 / 卡口 / 方向 / 号牌最后一位 / 号牌种类_号牌号码_通过时间_1（ or 2）.jpg
+                dest_filename = values[4] + "_" + values[2] + "_" + values[1] + "_" + values[len(values) - 1]
+
+                dest_dir = date + '/' + kkbh + '/' + xsfx + '/' + cphm + '/' + dest_filename
+
+                return dest_dir
+        except Exception, e:
+            logger.error('parser filename failed: %s' % e.message)
+            return None
