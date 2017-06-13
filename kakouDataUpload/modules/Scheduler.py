@@ -25,32 +25,27 @@ from database.KafkaOperatorImpl import KafkaImpl
 from database.RedisOperatorImpl import RedisImpl
 from FrmStatus import FrmStatus
 from RoadInfo import RoadInfo
+from utils.QueueUtils import QueueUtils
+from VehPass import VehPass
+
 logger = logging.getLogger("kakou.modules")
 
 
 class Scheduler(object):
 
     def __init__(self):
-        args = {}
         self.is_exit = False
         self.zkObj = ZkConfig(ZOOKEEPER_ADDR)
         self.jsonObj = self.get_zkconfig()
         self.redis = RedisImpl(self.jsonObj['kakouFilter']['redis-cluster']['startup_nodes'])
         # 实例化kafka连接
         self.kafkaConn = KafkaImpl(self.jsonObj['kakouFilter']['kafka'])
-        args['fileutils'] = FileUtils
-        args['jsonobj'] = self.jsonObj
-        args['carinfo'] = CarInfo
-        args['kafkaconn'] = self.kafkaConn
-        args['tdmstgs'] = TdmsTgs
-        args['redis'] = self.redis
-        args['timeutils'] = TimeUtils
-        EventHandler.init_params(**args)
 
     def handler(self, signum, frame):
         self.is_exit = True
         self.zkObj.close()
         self.kafkaConn.close()
+
         print 'receive a signal %d, is_exit = %d ' % (signum, self.is_exit)
         logger.info('receive a signal %d, is_exit = %d ' % (signum, self.is_exit))
         sys.exit()
@@ -66,13 +61,9 @@ class Scheduler(object):
 
         TdmsTgs.get_record()
         # 取二期卡口的字段记录
-        pdb.set_trace()
         FrmStatus.get_all_record()
         # 去二期卡口的道路信息
         RoadInfo.get_all_record()
-        print FrmStatus.data
-        print '========================='
-        print RoadInfo.mapdata
         # start file monitor
         # EventHandler.file_monitor(self.jsonObj['kakouFilter']['listenPath'])
 
@@ -92,11 +83,15 @@ class Scheduler(object):
         # 文件扫描线程
         scan_thread = threading.Thread(target=self.scan_file, args=(self.jsonObj['kakouFilter']['listenPath'], scantime))
 
+        # 发送kafka队列线程
+        kafka_thread = threading.Thread(target=self.deal_monitor_file)
+
         # 文件删除线程
         del_thread = threading.Thread(target=self.del_file_by_time)
 
         threads.append(monitor_thread)
         threads.append(scan_thread)
+        threads.append(kafka_thread)
         threads.append(del_thread)
 
         for t in threads:
@@ -120,7 +115,7 @@ class Scheduler(object):
 
     def del_file_by_time(self):
         while True:
-            time.sleep(60)
+            time.sleep(60 * 10)
             logger.info('delete file thread start')
             curTime = time.time()
             path = self.jsonObj['kakouFilter']['listenPath']
@@ -132,12 +127,13 @@ class Scheduler(object):
     def scan_file(self, path, scantime):
 
         array_list = FileUtils.scan_file(path, scantime)
+
+        # VehPass.insert_data(array_list)
         # 转换数据格式
         kafkaInfo = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
 
         # 将转换后的消息发送到kafka队列里
         for item in kafkaInfo:
-            logger.debug('strJson = %s' % item)
             self.kafkaConn.send_message(item)
 
         self.kafkaConn.producer.flush()
@@ -151,3 +147,25 @@ class Scheduler(object):
         EventHandler.bFlag = True
         EventHandler.createdFile.clear()
 
+    def deal_monitor_file(self):
+        try:
+
+            while True:
+                QueueUtils.get_queue().qsize()
+                filename = QueueUtils.get_message()
+                if filename:
+                    logger.debug('get queue msg : %s' % filename)
+                    array_list = []
+                    array_list.append(filename)
+                    # VehPass.insert_data(array_list)
+                    strJson = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
+                    if strJson:
+                        self.kafkaConn.send_message(strJson[0])
+                        self.kafkaConn.producer.flush()
+
+                    dest_dir = self.jsonObj['kakouFilter']['destDir'] + '/' + CarInfo.dest_dir_format(os.path.basename(filename))
+                    FileUtils.copy_file(filename, dest_dir)
+                    curFileTime = TimeUtils.get_format_time(os.path.getmtime(filename), '%Y-%m-%d %H:%M:%S')
+                    self.redis.setkey('scanPoint', curFileTime)
+        except Exception, e:
+            logger.error('deal_monitor_file is failed %s' % e.message)

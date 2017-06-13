@@ -6,10 +6,11 @@
 # @project  Python
 # @file     connection
 
+import os
 import cx_Oracle
 import logging
 logger = logging.getLogger("kakou.database")
-
+os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'  #或者os.environ['NLS_LANG'] = 'AMERICAN_AMERICA.AL32UTF8'
 
 class Connection(object):
 

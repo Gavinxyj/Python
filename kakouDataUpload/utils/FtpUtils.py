@@ -68,3 +68,4 @@ class FtpUtils(object):
     def close():
         if FtpUtils._connMgr:
             FtpUtils._connMgr.quite()
+

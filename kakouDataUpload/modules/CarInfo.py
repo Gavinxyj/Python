@@ -27,7 +27,7 @@ class CarInfo(object):
 
             values = fileName.split('_')
 
-            if values[len(values) - 1] == '2.jpg':
+            if values[len(values) - 1] != '1.jpg':
                 continue
 
             if len(values) < 12:
@@ -39,8 +39,8 @@ class CarInfo(object):
             # 卡口编号
             info['kkbh'] = values[0][:-3] + '000'
 
-            if values[0] in mapData.keys():
-                info['kkbh'] = mapData[values[0]]
+            if info['kkbh'] in mapData.keys():
+                info['kkbh'] = mapData[info['kkbh']]
             else:
                 continue
 
@@ -74,8 +74,8 @@ class CarInfo(object):
             info['tplj2'] = ''
             # 车辆特征图像3
             info['tplj3'] = ''
-
             strjson = json.dumps(info, ensure_ascii=False)
+
             data.append(strjson)
         return data
 

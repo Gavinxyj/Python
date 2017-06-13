@@ -13,6 +13,7 @@ if sys.getdefaultencoding() != default_encoding:
 import os
 from pyinotify import WatchManager, Notifier, \
     ProcessEvent, IN_DELETE, IN_CREATE, IN_MODIFY
+from utils.QueueUtils import QueueUtils
 import logging
 logger = logging.getLogger("kakou.modules")
 
@@ -21,24 +22,6 @@ class EventHandler(ProcessEvent):
 
     createdFile = {}
     bFlag = False
-    _fileutils = None
-    _jsonobj = None
-    _carinfo = None
-    _kafkaconn = None
-    _tdms_tgs = None
-    _redis = None
-    _timeutils = None
-    _array_list = []
-
-    @staticmethod
-    def init_params(**args):
-        EventHandler._fileutils = args['fileutils']
-        EventHandler._jsonobj = args['jsonobj']
-        EventHandler._carinfo = args['carinfo']
-        EventHandler._kafkaconn = args['kafkaconn']
-        EventHandler._tdms_tgs = args['tdmstgs']
-        EventHandler._redis = args['redis']
-        EventHandler._timeutils = args['timeutils']
 
     """事件处理"""
     def process_IN_CREATE(self, event):
@@ -48,19 +31,8 @@ class EventHandler(ProcessEvent):
 
         if os.path.isfile(os.path.join(event.path, event.name)):
             try:
-                logger.debug('Create file :%s' % os.path.join(event.path, event.name))
-                EventHandler._array_list.append(os.path.join(event.path, event.name))
-                strJson = EventHandler._carinfo.parser_format(EventHandler._array_list, EventHandler._tdms_tgs.mapdata)
-
-                if strJson:
-                    EventHandler._kafkaconn.send_message(strJson[0])
-                    EventHandler._kafkaconn.producer.flush()
-
-                dest_dir = EventHandler._jsonobj['kakouFilter']['destDir'] + '/' + EventHandler._carinfo.dest_dir_format(event.name)
-                EventHandler._fileutils.copy_file(os.path.join(event.path, event.name), dest_dir)
-                curFileTime = EventHandler._timeutils.get_format_time(os.path.getmtime(os.path.join(event.path, event.name)), '%Y-%m-%d %H:%M:%S')
-                EventHandler._redis.setkey('scanPoint', curFileTime)
-
+                logger.debug('input msg : %s' % os.path.join(event.path, event.name))
+                QueueUtils.put_message(os.path.join(event.path, event.name))
             except Exception, e:
                 logger.error('operator failed: %s' % e.message)
 

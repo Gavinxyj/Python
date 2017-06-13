@@ -26,11 +26,11 @@ class FrmStatus(object):
                 result = cursor.fetchall()
                 for item in result:
                     if item[1] in FrmStatus.data.keys():
-                        FrmStatus.data[item[1]][item[2]] = item[0]
+                        FrmStatus.data[item[1]][item[2].strip()] = item[0]
                     else:
                         info = {}
-                        info[item[2]] = item[0]
-                        FrmStatus.data[item[1]] = info[item[2]]
+                        info[item[2].strip()] = item[0]
+                        FrmStatus.data[item[1]] = info
                 cursor.close()
         except cx_Oracle.Error, e:
             conn.close()
