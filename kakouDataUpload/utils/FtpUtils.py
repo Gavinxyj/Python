@@ -27,6 +27,7 @@ class FtpUtils(object):
             else:
                 FtpUtils._connMgr = ftplib.FTP()
                 FtpUtils._connMgr.set_debuglevel(2)
+                FtpUtils._connMgr.encoding = 'utf-8'
                 FtpUtils._connMgr.connect(FtpUtils._connParams['Ftp']['url'], FtpUtils._connParams['Ftp']['port'])
                 FtpUtils._connMgr.login(FtpUtils._connParams['Ftp']['username'], FtpUtils._connParams['Ftp']['password'])
                 return FtpUtils._connMgr
@@ -42,8 +43,17 @@ class FtpUtils(object):
             ftp = FtpUtils.get_ftp_conn()
             ftp.set_debuglevel(2)
             if ftp:
-                ftp.cwd(upload_path)
-                ftp.storbinary('STOR %s' % os.path.basename(filename), file_handle, bufsize)
+                dirs = upload_path.split('/')
+                parent_dir = ''
+                for dir in dirs:
+                    if len(dir) > 0:
+                        parent_dir = parent_dir + '/' + dir
+                        try:
+                            ftp.mkd(parent_dir)
+                        except:
+                            print 'dir is exist!'
+                #ftp.cwd(upload_path)
+                ftp.storbinary('STOR %s' % (upload_path + os.path.basename(filename)), file_handle, bufsize)
             ftp.set_debuglevel(0)
             file_handle.close()
         except Exception, e:

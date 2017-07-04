@@ -4,10 +4,10 @@
 # @time     2017/6/6 0006 9:07
 # @project  Python
 # @file     run
-import sys
+import sys, os
 import logging.config
 from modules.Scheduler import Scheduler
-
+os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
     reload(sys)

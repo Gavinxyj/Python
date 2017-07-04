@@ -91,7 +91,7 @@ class VehPass(object):
                     continue
 
                 # 号牌号码
-                info['hphm'] = values[2].encode('utf-8') # values[2].encode('utf-8') # unicode(values[2]).encode('utf8')
+                info['hphm'] = values[2].encode('gbk') # values[2].encode('utf-8') # unicode(values[2]).encode('utf8')
                 # 号牌颜色
                 info['hpys'] = values[3]
                 # 号牌种类
@@ -119,7 +119,7 @@ class VehPass(object):
                 else:
                     info['filepath1'] = values[1][:10] + '/' + values[0][-3:] + '/' # + filename
                     # filepath2
-                    info['filepath2'] = values[1][:10] + '/' + values[0][-3:] + '/' # + filename[:-5] + '.2.jpg'
+                    info['filepath2'] = values[1][:10] + '/' + values[0][-3:] + '/' # + filename[:-5] + '2.jpg'
                 # 经过时间
                 info['jgsj'] = datetime.strptime(values[1][:-3], '%Y%m%d%H%M%S')
                 # 号牌种类id

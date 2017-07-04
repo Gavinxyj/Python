@@ -36,6 +36,15 @@ class CarInfo(object):
             # id
             info['id'] = ''
 
+            # 车辆品牌
+            info['clpp'] = ''
+
+            # 抓拍方向
+            info['zpfx'] = ''
+
+            # 设备编号
+            info['sbbh'] = values[0]
+
             # 卡口编号
             info['kkbh'] = values[0][:-3] + '000'
 
@@ -74,7 +83,7 @@ class CarInfo(object):
             info['tplj2'] = ''
             # 车辆特征图像3
             info['tplj3'] = ''
-            strjson = json.dumps(info, ensure_ascii=False)
+            strjson = json.dumps(info, ensure_ascii=False, sort_keys=True)
 
             data.append(strjson)
         return data
@@ -85,7 +94,7 @@ class CarInfo(object):
             if filename:
                 values = filename.split('_')
                 date = values[1][:8]
-                kkbh = values[0]
+                kkbh = values[0][:-3] + '000'
                 xsfx = values[7]
                 cphm = values[2]
                 if cphm == '-':
@@ -98,8 +107,7 @@ class CarInfo(object):
 
                 # 处理后图片存放规则：日期 / 卡口 / 方向 / 号牌最后一位 / 号牌种类_号牌号码_通过时间_1（ or 2）.jpg
                 dest_filename = values[4] + "_" + values[2] + "_" + values[1] + "_" + values[len(values) - 1]
-
-                dest_dir = date + '/' + kkbh + '/' + xsfx + '/' + cphm + '/' + dest_filename
+                dest_dir = date + '/' + kkbh + '/' + xsfx + '/' + cphm + '/' + dest_filename 
 
                 return dest_dir
         except Exception, e:
