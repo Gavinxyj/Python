@@ -23,19 +23,19 @@ class EventHandler(pyinotify.ProcessEvent):
     createdFile = {}
     bFlag = False
 
-    """浜嬩欢澶勭悊"""
+    """事件处理"""
     def process_IN_CREATE(self, event):
         if os.path.isdir(event.pathname):
             logger.debug('event name:'+event.maskname+',dir ' + event.pathname + ' is created.')
         else:
             logger.debug('event name:'+event.maskname+',file ' + event.pathname + ' is created.')
 
-        '''
-        print 'input msg : %s' % os.path.join(event.path, event.name)
+
+        # print 'input msg : %s' % os.path.join(event.path, event.name)
         if not self.bFlag:
             filename = os.path.join(event.path, event.name)
             self.createdFile[filename] = 1
-
+        '''
         if os.path.isfile(os.path.join(event.path, event.name)):
             try:
                 logger.debug('input msg : %s' % os.path.join(event.path, event.name))
@@ -51,9 +51,9 @@ class EventHandler(pyinotify.ProcessEvent):
         pass
 
     def process_IN_CLOSE_WRITE(self, event):
-        logger.debug('Close write file: %s' % event.pathname)
+        # logger.debug('Close write file: %s' % event.pathname)
         try:
-            logger.debug('input msg : %s' % event.pathname)
+            # logger.debug('input msg : %s' % event.pathname)
             QueueUtils.put_message(event.pathname)
         except Exception, e:
             logger.error('operator failed: %s' % e.message)

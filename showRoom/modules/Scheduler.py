@@ -70,17 +70,17 @@ class Scheduler(object):
                     QueueUtils.put_message(row.rowid)
 
     def deal_data(self):
-        #try:
-        while True and not self.is_exit:
-            msg = QueueUtils.get_message()
-            if msg:
-                row = VehPass.query_data_by_rowid(msg)
-                if row:
-                    strJson = VehPass.parser_format(row[0])
-                    if strJson:
-                        self.kafkaConn.send_message(strJson)
-                        self.kafkaConn.producer.flush()
+        try:
+            while True and not self.is_exit:
+                msg = QueueUtils.get_message()
+                if msg:
+                    row = VehPass.query_data_by_rowid(msg)
+                    if row:
+                        strJson = VehPass.parser_format(row[0])
+                        if strJson:
+                            self.kafkaConn.send_message(strJson)
+                            self.kafkaConn.producer.flush()
 
-        #except Exception, e:
-        #    logger.error('deal_data failed, msg : %s error: %s' % (row[0], e.message))
+        except Exception, e:
+            logger.error('deal_data failed, msg : %s error: %s' % (row[0], e.message))
 

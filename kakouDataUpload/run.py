@@ -4,10 +4,14 @@
 # @time     2017/6/6 0006 9:07
 # @project  Python
 # @file     run
-import sys, os
-import logging.config
-from modules.Scheduler import Scheduler
+
+import os, sys
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
+import logging.config
+
+from showRoom.modules.Scheduler import Scheduler
+
+
 default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
     reload(sys)

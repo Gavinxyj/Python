@@ -41,7 +41,7 @@ class FtpUtils(object):
             bufsize = 4096
             file_handle = open(filename, 'rb')
             ftp = FtpUtils.get_ftp_conn()
-            ftp.set_debuglevel(2)
+            ftp.set_debuglevel(0)
             if ftp:
                 dirs = upload_path.split('/')
                 parent_dir = ''
@@ -51,9 +51,9 @@ class FtpUtils(object):
                         try:
                             ftp.mkd(parent_dir)
                         except:
-                            print 'dir is exist!'
+                            pass
                 #ftp.cwd(upload_path)
-                ftp.storbinary('STOR %s' % (upload_path + os.path.basename(filename)), file_handle, bufsize)
+                ftp.storbinary('STOR %s' % (upload_path + os.path.basename(filename.decode('utf-8').encode('gbk'))), file_handle, bufsize)
             ftp.set_debuglevel(0)
             file_handle.close()
         except Exception, e:

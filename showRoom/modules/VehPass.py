@@ -24,56 +24,66 @@ class VehPass(object):
 
     @staticmethod
     def parser_format(values):
-        #try:
-        info = {}
+        try:
+            info = {}
 
-        # id
-        info['id'] = values[0]
-        # 车辆品牌
-        info['clpp'] = ''
-        # 抓拍方向
-        info['zpfx'] = ''
-        # 设备编号
-        info['sbbh'] = ''
-        # 卡口编号
-        info['kkbh'] = '11'
-        # 车辆通过时间
-        info['tgsj'] = values[6].strftime('%Y-%m-%d %H:%M:%S.%f')
-        # 号牌号码
-        info['hphm'] = values[4]
+            # id
+            info['id'] = values[0]
+            # 车辆品牌
+            info['clpp'] = ''
+            # 抓拍方向
+            info['zpfx'] = ''
+            # 设备编号
+            info['sbbh'] = ''
+            # 卡口编号
+            info['kkbh'] = '11'
+            # 车辆通过时间
+            info['tgsj'] = values[6].strftime('%Y-%m-%d %H:%M:%S.%f')[:-7] + ' ' + values[6].strftime('%Y-%m-%d %H:%M:%S.%f')[-6:-3]
+            # 号牌号码
+            info['hphm'] = values[4]
+            if values[4] == '车牌':
+                info['hphm'] = '未识别'
 
-        # 车辆通行状态
-        info['cltxzt'] = values[11]
+            # 车辆通行状态
+            info['cltxzt'] = values[11]
+            if values[11] is None:
+                info['cltxzt'] = ""
 
-        # 号牌种类
-        info['hpzl'] = '%02d' % int(values[5])
-        # 行驶速度
-        info['xssd'] = values[7]
-        # 车道编号
-        info['cdbh'] = '%02d' % int(values[2])
-        # 车行方向
-        info['cxfx'] = '%02d' % int(values[3])
-        if values[7] == '1':
-            info['cxfx'] = '02'
-        elif values[7] == '2':
-            info['cxfx'] = '01'
-        # 车身颜色
-        info['csys'] = values[9]
-        imgPath = VehPass.query_img_path_rowid(values[0])
-        # 车辆特征图像1
-        if imgPath[0][1]:
-            info['tplj1'] = 'http://192.168.88.59:8088' + imgPath[0][1]
-        # 车辆特征图像2
-        if imgPath[0][0]:
-            info['tplj2'] = 'http://192.168.88.59:8088' + imgPath[0][0]
-        # 车辆特征图像3
-        info['tplj3'] = ''
-        strjson = json.dumps(info, ensure_ascii=False, sort_keys=True)
-        logger.debug('strJson = %s' % strjson)
-        return json.loads(strjson)
+            # 号牌种类
+            info['hpzl'] = '%02d' % int(values[5])
+            if info['hphm'] == '未识别':
+                info['hpzl'] = '99'
+            elif info['hpzl'] == '01':
+                info['hpzl'] = '02'
+            elif info['hpzl'] == '02':
+                info['hpzl'] = '01'
+            # 行驶速度
+            info['xssd'] = values[7]
+            # 车道编号
+            info['cdbh'] = '%02d' % int(values[2])
+            # 车行方向
+            info['cxfx'] = '%02d' % int(values[3])
+            if values[7] == '1':
+                info['cxfx'] = '02'
+            elif values[7] == '2':
+                info['cxfx'] = '01'
+            # 车身颜色
+            info['csys'] = values[9]
+            imgPath = VehPass.query_img_path_rowid(values[0])
+            # 车辆特征图像1
+            if imgPath[0][1]:
+                info['tplj1'] = 'http://192.168.88.59:8088' + imgPath[0][1]
+            # 车辆特征图像2
+            if imgPath[0][0]:
+                info['tplj2'] = 'http://192.168.88.59:8088' + imgPath[0][0]
+            # 车辆特征图像3
+            info['tplj3'] = ''
+            strjson = json.dumps(info, ensure_ascii=False, sort_keys=True)
+            logger.debug('strJson = %s' % strjson)
+            return strjson
 
-        #except Exception, e:
-        #    logger.error('parser format failed msg ' % e.message)
+        except Exception, e:
+            logger.error('parser format failed msg ' % e.message)
 
     @staticmethod
     def query_data_by_rowid(rowid):

@@ -33,7 +33,6 @@ logger = logging.getLogger("kakou.modules")
 
 
 class Scheduler(object):
-
     def __init__(self):
         self.is_exit = False
         self.zkObj = ZkConfig(ZOOKEEPER_ADDR)
@@ -46,7 +45,6 @@ class Scheduler(object):
         self.is_exit = True
         self.zkObj.close()
         self.kafkaConn.close()
-
         print 'receive a signal %d, is_exit = %d ' % (signum, self.is_exit)
         logger.info('receive a signal %d, is_exit = %d ' % (signum, self.is_exit))
         sys.exit()
@@ -62,7 +60,6 @@ class Scheduler(object):
         FtpUtils.init_conn(self.jsonObj['kakouFilter'])
 
         # 从运维数据库获取卡口编号与路口编号映射关系
-
         TdmsTgs.get_record()
         # 取二期卡口的字段记录
         FrmStatus.get_all_record()
@@ -93,12 +90,12 @@ class Scheduler(object):
         kafka_thread = threading.Thread(target=self.deal_monitor_file)
 
         # 文件删除线程
-        #del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath'], scantime, deletetime))
+        del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath'], scantime, deletetime))
 
         threads.append(monitor_thread)
         threads.append(scan_thread)
         threads.append(kafka_thread)
-        #threads.append(del_thread)
+        threads.append(del_thread)
 
         for t in threads:
             t.setDaemon(True)
@@ -130,12 +127,12 @@ class Scheduler(object):
             curTime = time.time()
             logger.info('delete file thread end')
 
-
     def scan_file(self, path, scantime):
         try:
             array_list = FileUtils.scan_file(path, scantime)
 
             # 插入到数据库
+            # pdb.set_trace()
             VehPass.insert_data(array_list)
 
             # 转换数据格式
@@ -161,9 +158,10 @@ class Scheduler(object):
     def deal_monitor_file(self):
         try:
             while True:
-                QueueUtils.get_queue().qsize()
+
                 filename = QueueUtils.get_message()
                 if filename:
+
                     logger.debug('get queue msg : %s' % filename)
                     array_list = []
                     array_list.append(filename)
@@ -180,20 +178,21 @@ class Scheduler(object):
                     FileUtils.copy_file(filename, dest_dir)
 
                     # 写入宇视的数据库
-                    VehPass.insert_data(array_list)
-
                     try:
                         # 上传文件到宇视的ftp服务器
-                        p, f = os.path.split(dest_filepath)
+                        ftpPath = CarInfo.ftp_dir_format(os.path.basename(filename))
+                        p, f = os.path.split(ftpPath)
                         ftp_dir = '/' + p
-                        print 'Ftp upload file: %s' % ftp_dir
-                        FtpUtils.upload_file(filename, ftp_dir + '/')
+                        logger.debug('Ftp upload file: %s' % ftpPath)
+                        FtpUtils.upload_file(filename, ftpPath + '/')
+                        test_list = []
+                        test_list.append(filename.decode('utf-8').encode('gbk'))
+                        VehPass.insert_data(test_list)
                     except Exception, e:
-                        print 'ftp upload failed %s' % e.message
                         logger.error('ftp upload failed %s' % e.message)
 
                     curFileTime = TimeUtils.get_format_time(os.path.getmtime(filename), '%Y-%m-%d %H:%M:%S')
                     self.redis.setkey('scanPoint', curFileTime)
+
         except Exception, e:
-            print 'deal_monitor_file is failed %s' % e.message
             logger.error('deal_monitor_file is failed %s' % e.message)
