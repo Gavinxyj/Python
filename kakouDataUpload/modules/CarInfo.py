@@ -122,20 +122,3 @@ class CarInfo(object):
         except Exception, e:
             logger.error('parser filename failed: %s' % e.message)
             return None
-
-    @staticmethod
-    def ftp_dir_format(filename):
-        try:
-            if filename:
-                values = filename.split('_')
-                date = values[1][:8]
-                ip = values[0][-3:]
-
-                # 处理后图片存放规则：时间/ip/*.jpg
-                # dest_filename = values[4] + "_" + values[2] + "_" + values[1] + "_" + values[len(values) - 1]
-                dest_dir = date + '/' + ip
-
-                return dest_dir
-        except Exception, e:
-            logger.error('parser filename failed: %s' % e.message)
-            return None

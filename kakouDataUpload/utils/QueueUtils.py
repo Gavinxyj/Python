@@ -16,7 +16,7 @@ class QueueUtils(object):
         if QueueUtils._queueObj:
             return QueueUtils._queueObj
         else:
-            QueueUtils._queueObj = Queue.Queue(1024)
+            QueueUtils._queueObj = Queue.Queue(10240)
             return QueueUtils._queueObj
 
     @staticmethod

@@ -33,6 +33,7 @@ logger = logging.getLogger("kakou.modules")
 
 
 class Scheduler(object):
+    _bFlag = False
     def __init__(self):
         self.is_exit = False
         self.zkObj = ZkConfig(ZOOKEEPER_ADDR)
@@ -77,7 +78,9 @@ class Scheduler(object):
             scantime = 0
 
         deletetime = self.jsonObj['kakouFilter']['deleteTime']
-
+        #array_list = ['/data/source/20170807/13/835081001000/835081001022_20170807134809913_\xe5\x86\x80B7723F_2_2_1_93_1_6023_B_2_3_1.jpg']
+        #VehPass.insert_data(array_list)
+        
         threads = []
 
         # 文件状态监听线程
@@ -108,7 +111,7 @@ class Scheduler(object):
 
             if not alive:
                 break
-
+        
     def get_zkconfig(self):
         result = self.zkObj.get_data(ZOOKEEPER_PATH)
         if result:
@@ -129,70 +132,88 @@ class Scheduler(object):
 
     def scan_file(self, path, scantime):
         try:
-            array_list = FileUtils.scan_file(path, scantime)
-
-            # 插入到数据库
-            # pdb.set_trace()
-            VehPass.insert_data(array_list)
+            array_list = FileUtils.scan_file(path, scantime)         
 
             # 转换数据格式
             kafkaInfo = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
-
+            
             # 将转换后的消息发送到kafka队列里
             for item in kafkaInfo:
                 self.kafkaConn.send_message(item)
 
             self.kafkaConn.producer.flush()
-
+              
             for item in array_list:
                 filename = os.path.split(item)[1]
                 if filename:
                     dest_dir = CarInfo.dest_dir_format(filename)
                     if dest_dir:
                         FileUtils.copy_file(item, self.jsonObj['kakouFilter']['destDir'] + '/' + dest_dir)
+            
+            
+            
+             # 插入到数据库
+            # pdb.set_trace()
+            logger.debug('array_list len = %d' % len(array_list))
+            
+            for item in array_list:
+                try:
+                    # 上传文件到宇视的ftp服务器               
+                    ftpPath = VehPass.filename_format(os.path.basename(item))
+                    logger.debug('Ftp upload file: %s' % ftpPath)
+                    FtpUtils.upload_file(item, '/' + ftpPath)             
+                    # 写入宇视的数据库
+                    array_temp = []
+                    array_temp.append(item)
+                    VehPass.insert_data(array_temp)
+                except Exception, e:
+                    logger.error('ftp upload failed %s, filename: %s' % (e.message, item))
+            Scheduler._bFlag = True
             EventHandler.bFlag = True
             EventHandler.createdFile.clear()
         except Exception, e:
-            logger.error('scan_file is failed %s' % e.message)
+            logger.error('scan_file is failed %s, len = %d' % (e.message, len(array_list)))
 
     def deal_monitor_file(self):
         try:
+            
             while True:
+                if Scheduler._bFlag:
+                    filename = QueueUtils.get_message()
+                    if filename:
 
-                filename = QueueUtils.get_message()
-                if filename:
+                        logger.debug('get queue msg : %s' % filename)
+                        array_list = []
+                        array_list.append(filename)
+                        
+                        # 发送到kafka
+                        strJson = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
+                        if strJson:
+                            self.kafkaConn.send_message(strJson[0])
+                            self.kafkaConn.producer.flush()
 
-                    logger.debug('get queue msg : %s' % filename)
-                    array_list = []
-                    array_list.append(filename)
+                        # 复制一份到本地另一个目录下
+                        dest_filepath = CarInfo.dest_dir_format(os.path.basename(filename))
+                        dest_dir = self.jsonObj['kakouFilter']['destDir'] + '/' + dest_filepath
+                        FileUtils.copy_file(filename, dest_dir)
+                        
+                         
+                        try:
+                            # 上传文件到宇视的ftp服务器
+                            ftpPath = VehPass.filename_format(os.path.basename(filename))
+                            p, f = os.path.split(ftpPath)
+                            ftp_dir = '/' + p
+                            logger.debug('Ftp upload file: %s' % ftpPath)
+                            FtpUtils.upload_file(filename, '/' + ftpPath)
+                            # test_list = []
+                            # test_list.append(filename.decode('utf-8').encode('gbk'))
+                            # 写入宇视的数据库
+                            VehPass.insert_data(array_list)
+                        except Exception, e:
+                            logger.error('ftp upload failed %s, filename: %s' % (e.message, array_list))
 
-                    # 发送到kafka
-                    strJson = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
-                    if strJson:
-                        self.kafkaConn.send_message(strJson[0])
-                        self.kafkaConn.producer.flush()
-
-                    # 复制一份到本地另一个目录下
-                    dest_filepath = CarInfo.dest_dir_format(os.path.basename(filename))
-                    dest_dir = self.jsonObj['kakouFilter']['destDir'] + '/' + dest_filepath
-                    FileUtils.copy_file(filename, dest_dir)
-
-                    # 写入宇视的数据库
-                    try:
-                        # 上传文件到宇视的ftp服务器
-                        ftpPath = CarInfo.ftp_dir_format(os.path.basename(filename))
-                        p, f = os.path.split(ftpPath)
-                        ftp_dir = '/' + p
-                        logger.debug('Ftp upload file: %s' % ftpPath)
-                        FtpUtils.upload_file(filename, ftpPath + '/')
-                        test_list = []
-                        test_list.append(filename.decode('utf-8').encode('gbk'))
-                        VehPass.insert_data(test_list)
-                    except Exception, e:
-                        logger.error('ftp upload failed %s' % e.message)
-
-                    curFileTime = TimeUtils.get_format_time(os.path.getmtime(filename), '%Y-%m-%d %H:%M:%S')
-                    self.redis.setkey('scanPoint', curFileTime)
+                        curFileTime = TimeUtils.get_format_time(os.path.getmtime(filename), '%Y-%m-%d %H:%M:%S')
+                        self.redis.setkey('scanPoint', curFileTime)
 
         except Exception, e:
             logger.error('deal_monitor_file is failed %s' % e.message)

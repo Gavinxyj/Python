@@ -8,15 +8,14 @@
 import os, sys
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 import logging.config
+from modules.Scheduler import Scheduler
 
-from showRoom.modules.Scheduler import Scheduler
-
-
+'''
 default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
     reload(sys)
     sys.setdefaultencoding(default_encoding)
-
+'''
 logging.config.fileConfig('config/logging.conf')
 logger = logging.getLogger("kakou")
 if __name__ == '__main__':

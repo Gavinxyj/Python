@@ -5,11 +5,12 @@
 # @time     2017/6/12 0012 21:19
 # @project  Python
 # @file     FtpUtils
-import ftplib
+
 import os
+import ftplib
+import pdb
 import logging
 logger = logging.getLogger("kakou.utils")
-
 
 class FtpUtils(object):
     _connParams = None
@@ -32,18 +33,21 @@ class FtpUtils(object):
                 FtpUtils._connMgr.login(FtpUtils._connParams['Ftp']['username'], FtpUtils._connParams['Ftp']['password'])
                 return FtpUtils._connMgr
         except Exception, e:
-            logger('ftp login failed: %s' % e.message)
+            logger.error('ftp login failed: %s' % e.message)
             return None
 
     @staticmethod
     def upload_file(filename, upload_path):
         try:
+            logger.debug('filename-begin: %s' % filename)
             bufsize = 4096
             file_handle = open(filename, 'rb')
             ftp = FtpUtils.get_ftp_conn()
             ftp.set_debuglevel(0)
-            if ftp:
-                dirs = upload_path.split('/')
+            p, f = os.path.split(upload_path)
+            if ftp:                     
+                ftp_dir = '/' + p + '/'
+                dirs = ftp_dir.split('/')
                 parent_dir = ''
                 for dir in dirs:
                     if len(dir) > 0:
@@ -53,11 +57,14 @@ class FtpUtils(object):
                         except:
                             pass
                 #ftp.cwd(upload_path)
-                ftp.storbinary('STOR %s' % (upload_path + os.path.basename(filename.decode('utf-8').encode('gbk'))), file_handle, bufsize)
+                # (upload_path + os.path.basename(filename.decode('utf-8').encode('gbk'))
+                # fileformat = p + '/' + f.encode('gbk')#.encode('gbk') #.encode('utf-8')#.encode('gbk')
+                logger.debug('fileformat = %s' % upload_path.encode('gbk'))
+                ftp.storbinary(('STOR %s' % upload_path.encode('gbk')), file_handle, bufsize)
             ftp.set_debuglevel(0)
             file_handle.close()
         except Exception, e:
-            logger('upload file failed: %s, filename = %s' % (e.message, filename))
+            logger.error('upload file failed: %s, filename = %s' % (e.message, upload_path))
 
     @staticmethod
     def download_file(filename, download_path):
@@ -72,7 +79,7 @@ class FtpUtils(object):
             ftp.set_debuglevel(0)
             file_handle.close()
         except Exception, e:
-            logger('download file failed: %s, filename = %s' % (e.message, filename))
+            logger.error('download file failed: %s, filename = %s' % (e.message, filename))
 
     @staticmethod
     def close():
