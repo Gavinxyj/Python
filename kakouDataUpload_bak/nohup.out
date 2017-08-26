@@ -1,0 +1,134 @@
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-07-31 13:43:16,890:14459(0x7f883ccba700):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-07-31 13:43:16,894:14459(0x7f88253ec700):ZOO_INFO@check_events@1703: initiated connection to server [127.0.0.1:2181]
+2017-07-31 13:43:16,929:14459(0x7f88253ec700):ZOO_INFO@check_events@1750: session establishment complete on server [127.0.0.1:2181], sessionId=0x15c8be57bf90210, negotiated timeout=10000
+2017-08-01 01:57:26,226:14459(0x7f88253ec700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 31ms
+2017-08-01 04:08:40,035:14459(0x7f88253ec700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 14ms
+2017-08-08 13:53:54,479:16165(0x2af22d519660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-08-08 13:53:54,480:16165(0x2af22d519660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-08 13:53:54,481:16165(0x2af245028700):ZOO_INFO@check_events@1703: initiated connection to server [127.0.0.1:2181]
+2017-08-08 13:53:54,502:16165(0x2af245028700):ZOO_INFO@check_events@1750: session establishment complete on server [127.0.0.1:2181], sessionId=0x15da607908100f8, negotiated timeout=10000
+2017-08-08 18:10:15,845:5495(0x2b5361aeb660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-08-08 18:10:15,855:5495(0x2b5361aeb660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-08 18:10:15,856:5495(0x2b53796b2700):ZOO_INFO@check_events@1703: initiated connection to server [::1:2181]
+2017-08-08 18:10:15,859:5495(0x2b53796b2700):ZOO_INFO@check_events@1750: session establishment complete on server [::1:2181], sessionId=0x15da607908100fc, negotiated timeout=10000
+2017-08-10 17:29:42,022:18971(0x2b3154656660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-08-10 17:29:42,030:18971(0x2b3154656660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-10 17:29:42,031:18971(0x2b316c164700):ZOO_INFO@check_events@1703: initiated connection to server [127.0.0.1:2181]
+2017-08-10 17:29:42,070:18971(0x2b316c164700):ZOO_INFO@check_events@1750: session establishment complete on server [127.0.0.1:2181], sessionId=0x15da60790810110, negotiated timeout=10000
+2017-08-12 11:09:48,283:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 67ms
+2017-08-13 18:59:13,454:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 14ms
+2017-08-15 10:59:08,082:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 24ms
+2017-08-18 09:35:01,728:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 12ms
+2017-08-18 17:55:01,711:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 11ms
+2017-08-18 17:57:11,938:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 23ms
+2017-08-18 17:58:12,020:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 28ms
+2017-08-18 18:52:34,932:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 23ms
+2017-08-19 02:59:21,540:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 43ms
+2017-08-19 21:07:29,938:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 30ms
+2017-08-20 04:17:43,214:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 12ms
+2017-08-20 06:37:14,068:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 26ms
+2017-08-20 11:10:42,030:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 17ms
+2017-08-20 12:19:15,788:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 12ms
+2017-08-20 12:56:27,840:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 20ms
+2017-08-20 13:02:28,170:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 17ms
+2017-08-20 14:40:16,925:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 65ms
+2017-08-20 14:42:23,719:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 12ms
+2017-08-21 09:09:40,032:18971(0x2b316c164700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 12ms
+2017-08-21 16:23:25,061:25259(0x2ace82ef8660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-08-21 16:23:25,069:25259(0x2ace82ef8660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-21 16:23:25,069:25259(0x2ace9aa86700):ZOO_INFO@check_events@1703: initiated connection to server [::1:2181]
+2017-08-21 16:23:25,101:25259(0x2ace9aa86700):ZOO_INFO@check_events@1750: session establishment complete on server [::1:2181], sessionId=0x15da60790810111, negotiated timeout=10000
+2017-08-21 17:35:09,040:25259(0x2ace9aa86700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 13ms
+2017-08-21 22:53:09,477:25259(0x2ace9aa86700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 12ms
+2017-08-23 12:58:20,073:25259(0x2ace9aa86700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 65ms
+2017-08-23 19:39:48,441:25259(0x2ace9aa86700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 11ms
+Traceback (most recent call last):
+  File "run.py", line 11, in <module>
+    from modules.Scheduler import Scheduler
+  File "/home/test/kakouDataUpload/modules/Scheduler.py", line 186
+    array_list = []
+             ^
+SyntaxError: invalid syntax
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-08-23 20:28:49,397:30348(0x2ae3c5116660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-23 20:28:49,398:30348(0x2ae3dcc26700):ZOO_INFO@check_events@1703: initiated connection to server [127.0.0.1:2181]
+2017-08-23 20:28:49,428:30348(0x2ae3dcc26700):ZOO_INFO@check_events@1750: session establishment complete on server [127.0.0.1:2181], sessionId=0x15da60790810112, negotiated timeout=10000
+2017-08-24 10:45:11,769:5771(0x2adbe6ff2660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload
+2017-08-24 10:45:11,801:5771(0x2adbe6ff2660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-24 10:45:11,802:5771(0x2adbfeb39700):ZOO_INFO@check_events@1703: initiated connection to server [::1:2181]
+2017-08-24 10:45:11,837:5771(0x2adbfeb39700):ZOO_INFO@check_events@1750: session establishment complete on server [::1:2181], sessionId=0x15da60790810113, negotiated timeout=10000
+2017-08-24 15:21:50,166:5771(0x2adbfeb39700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 13ms
+2017-08-24 20:09:17,346:21235(0x2adf8c13a660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload_bak
+2017-08-24 20:09:17,352:21235(0x2adf8c13a660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-24 20:09:17,354:21235(0x2adfa3c81700):ZOO_INFO@check_events@1703: initiated connection to server [127.0.0.1:2181]
+2017-08-24 20:09:17,358:21235(0x2adfa3c81700):ZOO_INFO@check_events@1750: session establishment complete on server [127.0.0.1:2181], sessionId=0x15da60790810120, negotiated timeout=10000
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@712: Client environment:zookeeper.version=zookeeper C client 3.4.5
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@716: Client environment:host.name=host01
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@723: Client environment:os.name=Linux
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@724: Client environment:os.arch=2.6.32-431.el6.x86_64
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@725: Client environment:os.version=#1 SMP Fri Nov 22 03:15:09 UTC 2013
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@733: Client environment:user.name=root
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@741: Client environment:user.home=/root
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@log_env@753: Client environment:user.dir=/home/test/kakouDataUpload_bak
+2017-08-24 20:23:03,019:22446(0x2b1221ab8660):ZOO_INFO@zookeeper_init@786: Initiating client connection, host=localhost:2181 sessionTimeout=10000 watcher=(nil) sessionId=0 sessionPasswd=<null> context=(nil) flags=0
+2017-08-24 20:23:03,020:22446(0x2b12395ff700):ZOO_INFO@check_events@1703: initiated connection to server [127.0.0.1:2181]
+2017-08-24 20:23:03,023:22446(0x2b12395ff700):ZOO_INFO@check_events@1750: session establishment complete on server [127.0.0.1:2181], sessionId=0x15da60790810122, negotiated timeout=10000
+2017-08-24 21:10:55,595:22446(0x2b12395ff700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 14ms
+2017-08-25 09:51:36,513:22446(0x2b12395ff700):ZOO_WARN@zookeeper_interest@1557: Exceeded deadline by 19ms

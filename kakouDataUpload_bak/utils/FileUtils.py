@@ -12,7 +12,6 @@ import shutil
 import logging
 
 from modules.FileStatusMonitor import EventHandler
-from utils.QueueUtils import QueueUtils
 
 logger = logging.getLogger("kakou.utils")
 
@@ -44,10 +43,7 @@ class FileUtils(object):
                 fileTime = os.path.getmtime(os.path.join(parentdir, filename))
                 if fileTime >= scanTime:
                     logger.debug('filename = %s' % os.path.join(parentdir, filename))
-                    QueueUtils.put_message(os.path.join(parentdir, filename), 'ftp')
-                    QueueUtils.put_message(os.path.join(parentdir, filename), 'kafka')
-                    
-                    # array_list.append(os.path.join(parentdir, filename))
+                    array_list.append(os.path.join(parentdir, filename))
 
         return array_list
 

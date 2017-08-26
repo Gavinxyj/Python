@@ -10,24 +10,32 @@ import Queue
 class QueueUtils(object):
 
     _queueObj = None
+    _queue_ftp = None
 
     @staticmethod
-    def get_queue():
-        if QueueUtils._queueObj:
-            return QueueUtils._queueObj
+    def get_queue(types):
+        if types == 'ftp':
+            if QueueUtils._queue_ftp:
+                return QueueUtils._queue_ftp
+            else:
+                QueueUtils._queue_ftp = Queue.Queue(10240)
+                return QueueUtils._queue_ftp
         else:
-            QueueUtils._queueObj = Queue.Queue(10240)
-            return QueueUtils._queueObj
+            if QueueUtils._queueObj:
+                return QueueUtils._queueObj
+            else:
+                QueueUtils._queueObj = Queue.Queue(10240)
+                return QueueUtils._queueObj
 
     @staticmethod
-    def get_message():
-        queue = QueueUtils.get_queue()
+    def get_message(types):
+        queue = QueueUtils.get_queue(types)
         if not queue.empty():
             return queue.get()
 
     @staticmethod
-    def put_message(msg):
-        queue = QueueUtils.get_queue()
+    def put_message(msg, types):
+        queue = QueueUtils.get_queue(types)
         if queue:
             queue.put(msg)
 

@@ -23,7 +23,7 @@ class EventHandler(pyinotify.ProcessEvent):
     createdFile = {}
     bFlag = False
 
-    """ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½"""
+    """ÊÂ¼þ´¦Àí"""
     def process_IN_CREATE(self, event):
         if os.path.isdir(event.pathname):
             logger.debug('event name:'+event.maskname+',dir ' + event.pathname + ' is created.')
@@ -54,8 +54,7 @@ class EventHandler(pyinotify.ProcessEvent):
         # logger.debug('Close write file: %s' % event.pathname)
         try:
             # logger.debug('input msg : %s' % event.pathname)
-            QueueUtils.put_message(event.pathname, 'ftp')
-            QueueUtils.put_message(event.pathname, 'kafka')
+            QueueUtils.put_message(event.pathname)
         except Exception, e:
             logger.error('operator failed: %s' % e.message)
 

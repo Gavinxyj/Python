@@ -6,7 +6,6 @@
 # @project  Python
 # @file     test
 import cx_Oracle
-import pdb
 def OperationToString(operation):
     operations = []
     if operation & cx_Oracle.OPCODE_INSERT:
@@ -37,9 +36,7 @@ def OnChanges(message):
         else:
             print "        Rows:"
             for row in table.rows:
-                print "row=======", row
                 print "            Rowid:", row.rowid
-                print 'pass_id = %s, cross_id = %s' % (row[0], row[1])
                 print "            Operation:",
                 print OperationToString(row.operation)
 
@@ -50,7 +47,7 @@ sql = 'select pass_id, crossing_id from TRAFFIC_VEHICLE_PASS'
 subscriptionInsertUpdate = \
         connection.subscribe(callback = OnChanges,
         operations = cx_Oracle.OPCODE_INSERT | \
-        cx_Oracle.OPCODE_UPDATE, qos=cx_Oracle.SUBSCR_QOS_ROWIDS)
+        cx_Oracle.OPCODE_UPDATE, rowids=True)
 subscriptionInsertUpdate.registerquery(sql)
 
 raw_input("Hit enter to terminate...\n")

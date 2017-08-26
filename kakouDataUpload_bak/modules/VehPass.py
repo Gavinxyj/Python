@@ -39,15 +39,18 @@ class VehPass(object):
     def insert_veh_pass(dictparams):
         try:
             conn = Connection.get_conn('yushi')
+            logger.debug('conn = %s' % conn)
             if conn:
                 cursor = conn.cursor()
                 cursor.prepare(VehPass._insertSql)
+
                 cursor.executemany(None, dictparams)
                 cursor.close()
                 conn.commit()
         except cx_Oracle.Error, e:
             conn.rollback()
-            logger.error('Oracle Error: %s record = %s' % (e.args, dictparams))
+            logger.error('Oracle Error: %s' % e.args)
+            logger.error('record = %s' % dictparams)
 
     @staticmethod
     def insert_veh_pass_his(dictparams):
@@ -61,7 +64,8 @@ class VehPass(object):
                 conn.commit()
         except cx_Oracle.Error, e:
             conn.rollback()
-            logger.error('Oracle Error: %s record = %s' % (e.args, dictparams))
+            logger.error('Oracle Error: %s' % e.args)
+            logger.error('record = %s' % dictparams)
 
     @staticmethod
     def insert_veh_pass_violation(dictparams):
@@ -75,7 +79,8 @@ class VehPass(object):
                 conn.commit()
         except cx_Oracle.Error, e:
             conn.rollback()
-            logger.error('Oracle Error: %s record = %s' % (e.args, dictparams))
+            logger.error('Oracle Error: %s' % e.args)
+            logger.error('record = %s' % dictparams)
 
     @staticmethod
     def parser_format(item):
@@ -356,12 +361,14 @@ class VehPass(object):
         try:
             conn = Connection.get_conn('yushi')
             if conn:
+                Connection._mylock.acquire()
                 cursor = conn.cursor()
                 # plsql出参
                 max_id = cursor.var(cx_Oracle.STRING)
                 # 调用存储过程
                 cursor.callproc('fndj.getmaxid', [table_name, max_id])
                 cursor.close()
+                Connection._mylock.release()
                 return max_id.getvalue()
 			
         except cx_Oracle.Error, e:

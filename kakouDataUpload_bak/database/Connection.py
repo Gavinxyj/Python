@@ -17,7 +17,6 @@ import threading
 class Connection(object):
     _connParams = None
     _connMgr = {}
-
     @staticmethod
     def init_conn(params):
         Connection._connParams = params
@@ -32,7 +31,6 @@ class Connection(object):
                 if Connection._connMgr[str_type] is not None:
                     conn = Connection._connMgr[str_type]
                     return conn
-            logger.debug('strType = %s, _connMgr = %s' % (str_type, Connection._connMgr))
             if str_type in Connection._connParams.keys():
                 values = Connection._connParams[str_type]
                 dsn = cx_Oracle.makedsn(values['url'], values['port'], values['sid']).replace('SID', 'SERVICE_NAME')
