@@ -30,8 +30,8 @@ class FtpUtils(object):
                 FtpUtils._connMgr = ftplib.FTP()
                 FtpUtils._connMgr.set_debuglevel(2)
                 FtpUtils._connMgr.encoding = 'utf-8'
-                # FtpUtils._connMgr.connect(FtpUtils._connParams['Ftp']['url'], FtpUtils._connParams['Ftp']['port'])
-                FtpUtils._connMgr.connect('13.53.147.201', FtpUtils._connParams['Ftp']['port'])
+                FtpUtils._connMgr.connect(FtpUtils._connParams['Ftp']['url'], FtpUtils._connParams['Ftp']['port'])
+                # FtpUtils._connMgr.connect('13.53.147.201', FtpUtils._connParams['Ftp']['port'])
                 FtpUtils._connMgr.login(FtpUtils._connParams['Ftp']['username'], FtpUtils._connParams['Ftp']['password'])
                 return FtpUtils._connMgr
         except Exception, e:
@@ -69,6 +69,7 @@ class FtpUtils(object):
                 FtpUtils._mutex.release()
         except Exception, e:
             logger.error('upload file failed: %s, filename = %s' % (e.message, upload_path))
+            FtpUtils._mutex.release()
 
     @staticmethod
     def download_file(filename, download_path):
