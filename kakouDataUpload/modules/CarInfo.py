@@ -18,42 +18,36 @@ logger = logging.getLogger("kakou.modules")
 class CarInfo(object):
 
     @staticmethod
-    def parser_format(arrayData, mapData):
+    def parser_format(item, mapData):
         data = []
-        for item in arrayData:
+        try:
             info = {}
             path = os.path.split(item)[0]
-            fileName = os.path.split(item)[1]
+            filename = os.path.split(item)[1]
 
-            values = fileName.split('_')
+            values = filename.split('_')
 
-            if values[len(values) - 1] != '1.jpg':
-                continue
+            if values[len(values) - 1] != '1.jpg' and values[len(values) - 2] != 'H':
+                return None
 
             if len(values) < 12:
-                logger.error('this file is illegal, this file name is ' % fileName)
+                logger.error('this file is illegal, this file name is ' % filename)
 
             # id
             info['id'] = ''
-
             # 车辆品牌
             info['clpp'] = ''
-
             # 抓拍方向
             info['zpfx'] = ''
-
             # 设备编号
             info['sbbh'] = values[0]
-
             # 卡口编号
             info['kkbh'] = values[0][:-3] + '000'
-
             if info['kkbh'] in mapData.keys():
                 info['kkbh'] = mapData[info['kkbh']]
             else:
                 logger.error('kkbh map failed, filename = ' % item)
-                continue
-
+                return None
             # 车辆通过时间
             info['tgsj'] = TimeUtils.convert_time_format(values[1], '%Y%m%d%H%M%S', '%Y-%m-%d %H:%M:%S')
             # 号牌号码
@@ -61,13 +55,11 @@ class CarInfo(object):
                 info['hphm'] = '未识别'
             else:
                 info['hphm'] = values[2]
-
             # 车辆通行状态
             if values[8] == '0':
                 info['cltxzt'] = '1'
             else:
                 info['cltxzt'] = '2'
-
             # 号牌种类
             info['hpzl'] = '%02d' % int(values[4])
             # 行驶速度
@@ -91,7 +83,10 @@ class CarInfo(object):
             strjson = json.dumps(info, ensure_ascii=False, sort_keys=True)
 
             data.append(strjson)
-        return data
+            return data
+        except Exception as e:
+            logger.error('parser_format is failed filename: ' % filename)
+            
 
     @staticmethod
     def dest_dir_format(filename):

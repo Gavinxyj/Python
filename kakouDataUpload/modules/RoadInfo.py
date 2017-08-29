@@ -10,7 +10,7 @@ import logging
 from database.Connection import Connection
 
 logger = logging.getLogger("kakou.modules")
-
+    
 
 class RoadInfo(object):
 

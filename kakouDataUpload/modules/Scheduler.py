@@ -98,12 +98,12 @@ class Scheduler(object):
         # 数据库插入，ftp上传线程
         for index in range(5):
             ftp_threads = threading.Thread(target=self.ftp_thread_proc, args=(index,))
-            threads.append(ftp_threads)
+            # threads.append(ftp_threads)
 
-        threads.append(monitor_thread)
-        threads.append(scan_thread)
+        # threads.append(monitor_thread)
+        # threads.append(scan_thread)
         threads.append(kafka_thread)
-        threads.append(del_thread)
+        # threads.append(del_thread)
 
         for t in threads:
             t.setDaemon(True)
@@ -182,15 +182,18 @@ class Scheduler(object):
     def deal_monitor_file(self):
         while True:
             try:
-                filename = QueueUtils.get_message('kafka')
+                # filename = QueueUtils.get_message('kafka')
+                filename = '20170824/08/635061100136/635031013136_20170828141234520_冀B2673U_蓝_9_3_0_1_13093_Z_1_1_H_467.jpg'
                 if filename:
-                    logger.debug('thread-monitor get queue msg : %s queue-size: %d' % (filename, QueueUtils.get_queue('kafka').qsize()))
+                    # logger.debug('thread-monitor get queue msg : %s queue-size: %d' % (filename, QueueUtils.get_queue('kafka').qsize()))
 
-                    array_list = []
-                    array_list.append(filename)
+                    # array_list = []
+                    # array_list.append(filename)
 
                     # 发送到kafka
-                    strJson = CarInfo.parser_format(array_list, TdmsTgs.mapdata)
+                    strJson = CarInfo.parser_format(filename, TdmsTgs.mapdata)
+                    VehPass.insert_data(filename)
+                    break
                     if strJson:
                         self.kafkaConn.send_message(strJson[0])
                         self.kafkaConn.producer.flush()
@@ -208,14 +211,11 @@ class Scheduler(object):
 
     # ftp,数据库处理线程
     def ftp_thread_proc(self, thread_id):
-			                        
         while True:
             filename = QueueUtils.get_message('ftp')
-            array_list = []
             if filename:
                 try:
                     logger.debug('thread-%d get queue msg : %s queue-size: %d' % (thread_id, filename, QueueUtils.get_queue('ftp').qsize()))
-                    array_list.append(filename)
                     # 上传文件到宇视的ftp服务器
                     ftp_path = VehPass.filename_format(os.path.basename(filename))
                     logger.debug('thread-%d Ftp upload file: %s' % (thread_id, ftp_path))
@@ -223,7 +223,7 @@ class Scheduler(object):
                     logger.debug('thread-%d Ftp file: %s is upload complete!' % (thread_id, os.path.basename(filename)))
                     # 写入宇视的数据库
                     logger.debug('thread-%d insert database operator start!' % thread_id)
-                    VehPass.insert_data(array_list)
+                    VehPass.insert_data(filename)
                     logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
                 except Exception, e:
-                    logger.error('thread-%d ftp upload failed %s, filename: %s' % (thread_id, e.message, array_list))
+                    logger.error('thread-%d ftp upload failed %s, filename: %s' % (thread_id, e.message, filename))

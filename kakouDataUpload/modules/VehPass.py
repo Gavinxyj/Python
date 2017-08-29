@@ -47,7 +47,7 @@ class VehPass(object):
                 conn.commit()
         except cx_Oracle.Error, e:
             conn.rollback()
-            logger.error('Oracle Error: %s record = %s' % (e.args, dictparams))
+            logger.error('Oracle Error: %s record = %s' % (e.message, dictparams))
 
     @staticmethod
     def insert_veh_pass_his(dictparams):
@@ -61,7 +61,7 @@ class VehPass(object):
                 conn.commit()
         except cx_Oracle.Error, e:
             conn.rollback()
-            logger.error('Oracle Error: %s record = %s' % (e.args, dictparams))
+            logger.error('Oracle Error: %s record = %s' % (e.message, dictparams))
 
     @staticmethod
     def insert_veh_pass_violation(dictparams):
@@ -75,7 +75,7 @@ class VehPass(object):
                 conn.commit()
         except cx_Oracle.Error, e:
             conn.rollback()
-            logger.error('Oracle Error: %s record = %s' % (e.args, dictparams))
+            logger.error('Oracle Error: %s record = %s' % (e.message, dictparams))
 
     @staticmethod
     def parser_format(item):
@@ -87,7 +87,7 @@ class VehPass(object):
 
             values = filename.split('_')
 
-            if values[len(values) - 1] != '1.jpg':
+            if values[len(values) - 1] != '1.jpg' and values[len(values) - 2] != 'H':
                 return None
             # id
             info['id'] = VehPass.getMaxId('VEH_PASS')
@@ -98,8 +98,20 @@ class VehPass(object):
                 info['hphm'] = 'NA'
             # 号牌颜色
             info['hpys'] = values[3]
+            if info['hpys'] == '白':
+                info['hpys'] = '0'
+            elif info['hpys'] == '黃':
+                info['hpys'] = '1'
+            elif info['hpys'] == '蓝':
+                info['hpys'] = '2'
+            elif info['hpys'] == '黑':
+                info['hpys'] = '3'
+            elif info['hpys'] == '未知':
+                info['hpys'] = '4'
             # 号牌种类
             info['hpzl'] = '%02d' % int(values[4])
+            if values[len(values) - 2] == 'H':
+                info['hpzl'] = '99'
             # 路口编号
             info['lkbh'] = values[0][:-3] + '000'
             # 方向编号
@@ -156,7 +168,7 @@ class VehPass(object):
 
             values = filename.split('_')
 
-            if values[len(values) - 1] != '1.jpg':
+            if values[len(values) - 1] != '1.jpg' and values[len(values) - 2] != 'H':
                 return None
             # id
             info['id'] = VehPass.getMaxId('VEH_PASS_HIS')
@@ -166,8 +178,20 @@ class VehPass(object):
                 info['hphm'] = 'NA'
             # 号牌颜色
             info['hpys'] = values[3]
+            if info['hpys'] == '白':
+                info['hpys'] = '0'
+            elif info['hpys'] == '黃':
+                info['hpys'] = '1'
+            elif info['hpys'] == '蓝':
+                info['hpys'] = '2'
+            elif info['hpys'] == '黑':
+                info['hpys'] = '3'
+            elif info['hpys'] == '未知':
+                info['hpys'] = '4'
             # 号牌种类
             info['hpzl'] = '%02d' % int(values[4])
+            if values[len(values) - 2] == 'H':
+                info['hpzl'] = '99'
             # 路口编号
             info['lkbh'] = values[0][:-3] + '000'
             # 方向编号
@@ -184,6 +208,7 @@ class VehPass(object):
             info['clsd'] = values[6]
             # 车身颜色
             info['csys'] = values[9]
+
             # filepath1
             info['filepath1'] = VehPass.filename_format(filename)#.decode('utf-8').encode('gbk')
             # filepath2
@@ -226,7 +251,7 @@ class VehPass(object):
 
             values = filename.split('_')
 
-            if values[len(values) - 1] != '1.jpg':
+            if values[len(values) - 1] != '1.jpg' and values[len(values) - 2] != 'H':
                 return None
 
             if values[8] not in FrmStatus.data['wzxw'].keys():
@@ -243,8 +268,20 @@ class VehPass(object):
                 info['hphm'] = 'NA'
             # 号牌颜色
             info['hpys'] = values[3]
+            if info['hpys'] == '白':
+                info['hpys'] = '0'
+            elif info['hpys'] == '黃':
+                info['hpys'] = '1'
+            elif info['hpys'] == '蓝':
+                info['hpys'] = '2'
+            elif info['hpys'] == '黑':
+                info['hpys'] = '3'
+            elif info['hpys'] == '未知':
+                info['hpys'] = '4'
             # 号牌种类
             info['hpzl'] = '%02d' % int(values[4])
+            if values[len(values) - 2] == 'H':
+                info['hpzl'] = '99'
             # 路口编号
             info['lkbh'] = values[0][:-3] + '000'
             # 方向编号
@@ -261,28 +298,19 @@ class VehPass(object):
             info['clsd'] = values[6]
             # 车身颜色
             info['csys'] = values[9]
-            # filepath1
-            '''
-            if values[len(values) - 2] == '1':
-                # filepath1
+        
+            if values[len(values) - 2 ] == 'H':
                 info['filepath1'] = VehPass.filename_format(filename)#.decode('utf-8').encode('gbk')
                 # filepath2
                 info['filepath2'] = VehPass.filename_format(filename)#.decode('utf-8').encode('gbk')
-                # filepath2
+                # filepath3
                 info['filepath3'] = VehPass.filename_format(filename)#.decode('utf-8').encode('gbk')
-            elif values[len(values) - 2] == '2':
-                info['filepath1'] = VehPass.filename_format(filename)#.decode('utf-8').encode('gbk')
+            else:
+                info['filepath1'] = VehPass.filename_format(filename[:-5] + '0.jpg')#.decode('utf-8').encode('gbk')
                 # filepath2
-                info['filepath2'] = VehPass.filename_format(filename[:-5] + '2.jpg')#.decode('utf-8').encode('gbk')
+                info['filepath2'] = VehPass.filename_format(filename[:-5] + '1.jpg')#.decode('utf-8').encode('gbk')
                 # filepath3
                 info['filepath3'] = VehPass.filename_format(filename[:-5] + '2.jpg')#.decode('utf-8').encode('gbk')
-            else:
-            '''
-            info['filepath1'] = VehPass.filename_format(filename[:-5] + '0.jpg')#.decode('utf-8').encode('gbk')
-            # filepath2
-            info['filepath2'] = VehPass.filename_format(filename[:-5] + '1.jpg')#.decode('utf-8').encode('gbk')
-            # filepath3
-            info['filepath3'] = VehPass.filename_format(filename[:-5] + '2.jpg')#.decode('utf-8').encode('gbk')
             # 经过时间
             info['jgsj'] = datetime.strptime(values[1][:-3], '%Y%m%d%H%M%S')
             # 号牌种类id
@@ -324,33 +352,28 @@ class VehPass(object):
         return data
 
     @staticmethod
-    def insert_data(array_list):
+    def insert_data(item):
         try:
-            for item in array_list:               
-                try:
-                    vehpass = VehPass.parser_format(item)
-                    if vehpass:
-                        VehPass.insert_veh_pass(vehpass)
-                except Exception, e:
-                    logger.error('Oracle Error: %s filename: %s' % (e.message, item))
-                
-                try:
-                    hispass = VehPass.parser_his_format(item)
-                    if hispass:
-                        VehPass.insert_veh_pass_his(hispass)
-                except Exception, e:
-                    logger.error('Oracle Error: %s filename: %s' % (e.message, item))
-                
-                try:
-                    violation = VehPass.parser_violation_format(item)
-                    if violation:
-                        VehPass.insert_veh_pass_violation(violation)
-                except Exception, e:
-                    logger.error('Oracle Error: %s filename: %s' % (e.message, item))
-                    
+            vehpass = VehPass.parser_format(item)
+            if vehpass:
+                VehPass.insert_veh_pass(vehpass)
         except Exception, e:
-            logger.error('Oracle Error: %s' % e.message)
-
+            logger.error('Oracle Error: %s filename: %s' % (e.message, item))
+        
+        try:
+            hispass = VehPass.parser_his_format(item)
+            if hispass:
+                VehPass.insert_veh_pass_his(hispass)
+        except Exception, e:
+            logger.error('Oracle Error: %s filename: %s' % (e.message, item))
+        
+        try:
+            violation = VehPass.parser_violation_format(item)
+            if violation:
+                VehPass.insert_veh_pass_violation(violation)
+        except Exception, e:
+            logger.error('Oracle Error: %s filename: %s' % (e.message, item))
+                    
     @staticmethod
     def getMaxId(table_name):
         try:
@@ -385,7 +408,10 @@ class VehPass(object):
                 if hphm == '-':
                     hphm = 'NA'
                 # 处理后图片存放规则：时间/ip/*.jpg
-                dest_filename = date + '/' + ip + '/' + jgsj + '_' + fxbh + '_' + cdbh + '_' + hphm + '_' + values[len(values) - 1]
+                if values[len(values) - 2] == 'H':
+                    dest_filename = date + '/' + ip + '/' + jgsj + '_' + fxbh + '_' + cdbh + '_' + hphm + '_' + values[len(values) - 3] + '.jpg'
+                else:
+                    dest_filename = date + '/' + ip + '/' + jgsj + '_' + fxbh + '_' + cdbh + '_' + hphm + '_' + values[len(values) - 1]
                 return dest_filename
         except Exception, e:
             logger.error('parser filename failed: %s' % e.message)
