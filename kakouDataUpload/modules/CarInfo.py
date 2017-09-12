@@ -16,7 +16,7 @@ logger = logging.getLogger("kakou.modules")
 
 
 class CarInfo(object):
-
+    
     @staticmethod
     def parser_format(item, mapData):
         data = []

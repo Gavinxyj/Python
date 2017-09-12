@@ -114,9 +114,9 @@ class VehPass(object):
                 # 方向编号
                 info['fxbh'] = values[7][5:].decode('gbk').strip()
                 if info['fxbh'] == '由东向西':
-                    info['fxbh'] = '02'
-                elif info['fxbh'] == '由西向东':
                     info['fxbh'] = '01'
+                elif info['fxbh'] == '由西向东':
+                    info['fxbh'] = '02'
                 elif info['fxbh'] == '由南向北':
                     info['fxbh'] = '03'
                 elif info['fxbh'] == '由北向南':
@@ -198,9 +198,9 @@ class VehPass(object):
                 # 方向编号
                 info['fxbh'] = values[7][5:].decode('gbk').strip()
                 if info['fxbh'] == '由东向西':
-                    info['fxbh'] = '02'
-                elif info['fxbh'] == '由西向东':
                     info['fxbh'] = '01'
+                elif info['fxbh'] == '由西向东':
+                    info['fxbh'] = '02'
                 elif info['fxbh'] == '由南向北':
                     info['fxbh'] = '03'
                 elif info['fxbh'] == '由北向南':
@@ -291,9 +291,9 @@ class VehPass(object):
                 # 方向编号
                 info['fxbh'] = values[7][5:].decode('gbk').strip()
                 if info['fxbh'] == '由东向西':
-                    info['fxbh'] = '02'
-                elif info['fxbh'] == '由西向东':
                     info['fxbh'] = '01'
+                elif info['fxbh'] == '由西向东':
+                    info['fxbh'] = '02'
                 elif info['fxbh'] == '由南向北':
                     info['fxbh'] = '03'
                 elif info['fxbh'] == '由北向南':
@@ -403,9 +403,9 @@ class VehPass(object):
                 jgsj = values[1][5:]
                 fxbh = values[7][5:].decode('gbk').strip()
                 if fxbh == '由东向西':
-                    fxbh = '2'
-                elif fxbh == '由西向东':
                     fxbh = '1'
+                elif fxbh == '由西向东':
+                    fxbh = '2'
                 elif fxbh == '由南向北':
                     fxbh = '3'
                 elif fxbh == '由北向南':

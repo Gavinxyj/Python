@@ -96,7 +96,7 @@ class Scheduler(object):
         del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath']['hik'], scantime, deletetime))
 
         # 数据库插入，ftp上传线程
-        for index in range(1):
+        for index in range(10):
             ftp_threads = threading.Thread(target=self.ftp_thread_proc, args=(index,))
             threads.append(ftp_threads)
 

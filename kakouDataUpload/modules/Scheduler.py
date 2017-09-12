@@ -84,19 +84,19 @@ class Scheduler(object):
 
         threads = []
         # 文件状态监听线程
-        monitor_thread = threading.Thread(target=EventHandler.file_monitor, args=(self.jsonObj['kakouFilter']['listenPath'],))
+        monitor_thread = threading.Thread(target=EventHandler.file_monitor, args=(self.jsonObj['kakouFilter']['listenPath']['yushi'],))
         
         # 文件扫描线程
-        scan_thread = threading.Thread(target=FileUtils.scan_file, args=(self.jsonObj['kakouFilter']['listenPath'], scantime))
+        scan_thread = threading.Thread(target=FileUtils.scan_file, args=(self.jsonObj['kakouFilter']['listenPath']['yushi'], scantime))
 
         # 发送kafka队列线程
         kafka_thread = threading.Thread(target=self.deal_monitor_file)
 
         # 文件删除线程
-        del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath'], scantime, deletetime))
+        del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath']['yushi'], scantime, deletetime))
 
         # 数据库插入，ftp上传线程
-        for index in range(5):
+        for index in range(10):
             ftp_threads = threading.Thread(target=self.ftp_thread_proc, args=(index,))
             threads.append(ftp_threads)
 
@@ -123,8 +123,17 @@ class Scheduler(object):
             return json.loads(result[0])
         else:
             return None
-
+  
     def del_file_by_time(self, path, scantime, deletetime):
+        """[summary]
+        
+        [delete files by time thread]
+        
+        Arguments:
+            path {[string]} -- [delete files path]
+            scantime {[string]} -- [current scan files time]
+            deletetime {[string]} -- [delete how long time files]
+        """
         # 第一次启动只允许删除上次扫描点之前的文件
         curTime = scantime
 
@@ -195,6 +204,7 @@ class Scheduler(object):
                     if strJson:
                         self.kafkaConn.send_message(strJson[0])
                         self.kafkaConn.producer.flush()
+                        logger.debug('thread-monitor send kafka msg :%s' % strJson[0])
 
                     # 复制一份到本地另一个目录下
                     dest_filepath = CarInfo.dest_dir_format(os.path.basename(filename))
@@ -202,7 +212,7 @@ class Scheduler(object):
                     FileUtils.copy_file(filename, dest_dir)
                     curFileTime = TimeUtils.get_format_time(os.path.getmtime(filename), '%Y-%m-%d %H:%M:%S')
                     self.redis.setkey('scanPoint', curFileTime)
-                    logger.debug('thread-monitor send kafka and copy file is complete!')
+                    logger.debug('copy file is complete! filename :%s' % filename)
 
             except Exception, e:
                 logger.error('deal_monitor_file is failed %s' % e.message)

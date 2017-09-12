@@ -69,6 +69,7 @@ class FtpUtils(object):
                 FtpUtils._mutex.release()
         except Exception, e:
             logger.error('upload file failed: %s, filename = %s' % (e.message, upload_path))
+            FtpUtils._connMgr = None
             FtpUtils._mutex.release()
 
     @staticmethod

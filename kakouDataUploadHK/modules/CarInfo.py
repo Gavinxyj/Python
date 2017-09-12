@@ -63,9 +63,9 @@ class CarInfo(object):
                 # 车行方向
                 info['cxfx'] = values[7][5:].decode('gbk').strip()
                 if info['cxfx'] == '由东向西':
-                    info['cxfx'] = '02'
-                elif info['cxfx'] == '由西向东':
                     info['cxfx'] = '01'
+                elif info['cxfx'] == '由西向东':
+                    info['cxfx'] = '02'
                 elif info['cxfx'] == '由南向北':
                     info['cxfx'] = '03'
                 elif info['cxfx'] == '由北向南':
@@ -92,10 +92,6 @@ class CarInfo(object):
             date= TimeUtils.convert_time_format(str_json['tgsj'],'%Y-%m-%d %H:%M:%S', '%Y%m%d%H%M%S', True)[:8]
             kkbh= str_json['sbbh'][:-3] + '000'
             xsfx= '%d' % int(str_json['cxfx'])
-            if xsfx == '1':
-                xsfx = '2'
-            elif xsfx == '2':
-                xsfx = '1'
             cphm = str_json['hphm']
             if cphm == '-':
                 cphm = '000'
