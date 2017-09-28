@@ -84,20 +84,20 @@ class Scheduler(object):
 
         threads = []
         # 文件状态监听线程
-        monitor_thread = threading.Thread(target=EventHandler.file_monitor, args=(self.jsonObj['kakouFilter']['listenPath']['hik'],))
+        monitor_thread = threading.Thread(target=EventHandler.file_monitor, name = 'monitor_thread', args=(self.jsonObj['kakouFilter']['listenPath']['hik'],))
         
         # 文件扫描线程
-        scan_thread = threading.Thread(target=FileUtils.scan_file, args=(self.jsonObj['kakouFilter']['listenPath']['hik'], scantime))
+        scan_thread = threading.Thread(target=FileUtils.scan_file, name = 'scan_thread', args=(self.jsonObj['kakouFilter']['listenPath']['hik'], scantime))
 
         # 发送kafka队列线程
-        kafka_thread = threading.Thread(target=self.deal_monitor_file)
+        kafka_thread = threading.Thread(target=self.deal_monitor_file, name = 'kafka_thread')
 
         # 文件删除线程
-        del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath']['hik'], scantime, deletetime))
+        del_thread = threading.Thread(target=self.del_file_by_time, name = 'del_thread', args=(self.jsonObj['kakouFilter']['listenPath']['hik'], scantime, deletetime))
 
         # 数据库插入，ftp上传线程
         for index in range(10):
-            ftp_threads = threading.Thread(target=self.ftp_thread_proc, args=(index,))
+            ftp_threads = threading.Thread(target=self.ftp_thread_proc, name = 'ftp_thread%d' % index, args=(index,))
             threads.append(ftp_threads)
 
         threads.append(monitor_thread)
@@ -113,7 +113,8 @@ class Scheduler(object):
             alive = False
             for t in threads:
                 alive = alive or t.isAlive()
-
+                if not t.isAlive:
+                    logger.debug('name: %s is %d' % (t.getName(), t.isAlive))
             if not alive:
                 break
 
@@ -174,6 +175,8 @@ class Scheduler(object):
             except Exception, e:
                 logger.error('deal_monitor_file is failed %s' % e.message)
 
+        print 'thread-monitor quite!'
+
     # ftp,数据库处理线程
     def ftp_thread_proc(self, thread_id):
         while True:
@@ -193,3 +196,5 @@ class Scheduler(object):
                         logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
                 except Exception, e:
                     logger.error('thread-%d ftp upload failed %s, filename: %s' % (thread_id, e.message, filename))
+
+        print 'thread-%d quite' % thread_id

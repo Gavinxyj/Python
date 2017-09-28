@@ -18,13 +18,13 @@ class QueueUtils(object):
             if QueueUtils._queue_ftp:
                 return QueueUtils._queue_ftp
             else:
-                QueueUtils._queue_ftp = Queue.Queue(10240)
+                QueueUtils._queue_ftp = Queue.Queue()
                 return QueueUtils._queue_ftp
         else:
             if QueueUtils._queueObj:
                 return QueueUtils._queueObj
             else:
-                QueueUtils._queueObj = Queue.Queue(10240)
+                QueueUtils._queueObj = Queue.Queue()
                 return QueueUtils._queueObj
 
     @staticmethod

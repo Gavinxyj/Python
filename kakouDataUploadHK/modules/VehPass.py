@@ -105,7 +105,7 @@ class VehPass(object):
                     info['hpys'] = '2'
                 elif info['hpys'] == '黑':
                     info['hpys'] = '3'
-                elif info['hpys'] == '未知':
+                else:
                     info['hpys'] = '4'
                 # 号牌种类
                 info['hpzl'] = '02'
@@ -189,7 +189,7 @@ class VehPass(object):
                     info['hpys'] = '2'
                 elif info['hpys'] == '黑':
                     info['hpys'] = '3'
-                elif info['hpys'] == '未知':
+                else:
                     info['hpys'] = '4'
                 # 号牌种类
                 info['hpzl'] = '02'
@@ -269,7 +269,7 @@ class VehPass(object):
                 # id
                 info['id'] = VehPass.getMaxId('VEH_VIOLATION')
                 # 号牌号码
-                info['hphm'] = values[2][5:].decode(gbk).strip()#.decode('utf-8').encode('gbk')
+                info['hphm'] = values[2][5:].decode('gbk').strip()#.decode('utf-8').encode('gbk')
                 if info['hphm'] == '无车牌':
                     info['hphm'] = 'NA'
                 # 号牌颜色
@@ -282,7 +282,7 @@ class VehPass(object):
                     info['hpys'] = '2'
                 elif info['hpys'] == '黑':
                     info['hpys'] = '3'
-                elif info['hpys'] == '未知':
+                else:
                     info['hpys'] = '4'
                 # 号牌种类
                 info['hpzl'] = '02'

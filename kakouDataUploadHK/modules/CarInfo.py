@@ -93,7 +93,7 @@ class CarInfo(object):
             kkbh= str_json['sbbh'][:-3] + '000'
             xsfx= '%d' % int(str_json['cxfx'])
             cphm = str_json['hphm']
-            if cphm == '-':
+            if cphm == '未识别':
                 cphm = '000'
             else:
                 for item in cphm[::-1]:
