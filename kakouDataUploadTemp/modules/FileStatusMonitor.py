@@ -23,7 +23,7 @@ class EventHandler(pyinotify.ProcessEvent):
     createdFile = {}
     bFlag = False
 
-    """�¼�����"""
+    """Create file trigger"""
     def process_IN_CREATE(self, event):
         if os.path.isdir(event.pathname):
             logger.debug('event name:'+event.maskname+',dir ' + event.pathname + ' is created.')

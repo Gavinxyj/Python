@@ -353,6 +353,7 @@ class VehPass(object):
 
     @staticmethod
     def insert_data(item):
+
         try:
             vehpass = VehPass.parser_format(item)
             if vehpass:
@@ -388,7 +389,6 @@ class VehPass(object):
                 return max_id.getvalue()
 			
         except cx_Oracle.Error, e:
-            Connectio.close_conn('yushi')
             logger.error('Oracle Error: %s' % e.args)
 
     @staticmethod

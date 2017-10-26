@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 # -*- coding:utf-8 -*-
 # @author   youjiang xie
 # @E-mail   xie_youjiang@163.com
@@ -28,13 +28,15 @@ from FrmStatus import FrmStatus
 from RoadInfo import RoadInfo
 from utils.QueueUtils import QueueUtils
 from VehPass import VehPass
+from violation import Violation
 
 logger = logging.getLogger("kakou.modules")
 
 
 class Scheduler(object):
     _bFlag = False
-
+    dict_filename = {}
+    count = 0
     def __init__(self):
         self.is_exit = False
         self.zkObj = ZkConfig(ZOOKEEPER_ADDR)
@@ -42,8 +44,7 @@ class Scheduler(object):
         self.redis = RedisImpl(self.jsonObj['kakouFilter']['redis-cluster']['startup_nodes'])
         # 实例化kafka连接
         self.kafkaConn = KafkaImpl(self.jsonObj['kakouFilter']['kafka'])
-        # 开关
-        self.flag = self.jsonObj['kakouFilter']['flag']
+
     def handler(self, signum, frame):
         self.is_exit = True
         self.zkObj.close()
@@ -62,50 +63,32 @@ class Scheduler(object):
         '初始化Ftp连接参数'
         FtpUtils.init_conn(self.jsonObj['kakouFilter'])
 
-        # 从运维数据库获取卡口编号与路口编号映射关系
-        TdmsTgs.get_record()
-        # 取二期卡口的字段记录
-        FrmStatus.get_all_record()
-        # 去二期卡口的道路信息
-        RoadInfo.get_all_record()
-        # start file monitor
-        # EventHandler.file_monitor(self.jsonObj['kakouFilter']['listenPath'])
+        items = Violation.get_all_record()
 
-        # pdb.set_trace()
-        # start scan file
-        scantime = self.redis.getkey('scanPoint')
-        if scantime is not None:
-            scantime = TimeUtils.get_longtime(scantime[:-4], '%Y-%m-%d %H:%M:%S')
-        else:
-            scantime = 0
-
-        deletetime = self.jsonObj['kakouFilter']['deleteTime']
-        # array_list = ['/data/source/20170807/13/835081001000/835081001022_20170807134809913_\xe5\x86\x80B7723F_2_2_1_93_1_6023_B_2_3_1.jpg']
-        # VehPass.insert_data(array_list)
-
-        threads = []
-        # 文件状态监听线程
-        monitor_thread = threading.Thread(target=EventHandler.file_monitor, args=(self.jsonObj['kakouFilter']['listenPath']['yushi'],))
         
-        # 文件扫描线程
-        scan_thread = threading.Thread(target=FileUtils.scan_file, args=(self.jsonObj['kakouFilter']['listenPath']['yushi'], scantime))
-
-        # 发送kafka队列线程
-        kafka_thread = threading.Thread(target=self.deal_monitor_file)
-
-        # 文件删除线程
-        del_thread = threading.Thread(target=self.del_file_by_time, args=(self.jsonObj['kakouFilter']['listenPath']['yushi'], scantime, deletetime))
-
+        for item in items:
+            filepath = os.path.basename(item[1])
+            values = filepath.split('_')
+            filename = '%d' % int(item[0]) + '_' + values[3] + '_' + values[0] + '_0.jpg'
+            filename2 = '%d' % int(item[0]) + '_' + values[3] + '_' + values[0] + '_1.jpg'
+            filename3 = '%d' % int(item[0]) + '_' + values[3] + '_' + values[0] + '_2.jpg'
+            self.dict_filename[filename] = item[1]
+            self.dict_filename[filename2] = item[2]
+            self.dict_filename[filename3] = item[3]
+        print len(self.dict_filename)
+        threads = []
+        ftp_threads = threading.Thread(target=self.ftp_thread_proc)
+        threads.append(ftp_threads)
+        
+        scantime = TimeUtils.get_longtime('2017-09-07 00:00:00', '%Y-%m-%d %H:%M:%S')
+         # 文件扫描线程
+        #pdb.set_trace()
+        scan_thread = threading.Thread(target=FileUtils.scan_file, args=('/data/img/20170907', scantime))
         # 数据库插入，ftp上传线程
-        for index in range(5):
-            ftp_threads = threading.Thread(target=self.ftp_thread_proc, args=(index,))
-            threads.append(ftp_threads)
-
-        threads.append(monitor_thread)
+        
+        
+        
         threads.append(scan_thread)
-        threads.append(kafka_thread)
-        threads.append(del_thread)
-
         for t in threads:
             t.setDaemon(True)
             t.start()
@@ -117,15 +100,23 @@ class Scheduler(object):
 
             if not alive:
                 break
-
     def get_zkconfig(self):
         result = self.zkObj.get_data(ZOOKEEPER_PATH)
         if result:
             return json.loads(result[0])
         else:
             return None
-
+  
     def del_file_by_time(self, path, scantime, deletetime):
+        """[summary]
+        
+        [delete files by time thread]
+        
+        Arguments:
+            path {[string]} -- [delete files path]
+            scantime {[string]} -- [current scan files time]
+            deletetime {[string]} -- [delete how long time files]
+        """
         # 第一次启动只允许删除上次扫描点之前的文件
         curTime = scantime
 
@@ -191,12 +182,11 @@ class Scheduler(object):
                     # array_list = []
                     # array_list.append(filename)
 
-                    # 发送到kafka                   
+                    # 发送到kafka
                     strJson = CarInfo.parser_format(filename, TdmsTgs.mapdata)
                     if strJson:
                         self.kafkaConn.send_message(strJson[0])
                         self.kafkaConn.producer.flush()
-                        logger.debug('thread-monitor send kafka msg :%s' % strJson[0])
 
                     # 复制一份到本地另一个目录下
                     dest_filepath = CarInfo.dest_dir_format(os.path.basename(filename))
@@ -204,41 +194,27 @@ class Scheduler(object):
                     FileUtils.copy_file(filename, dest_dir)
                     curFileTime = TimeUtils.get_format_time(os.path.getmtime(filename), '%Y-%m-%d %H:%M:%S')
                     self.redis.setkey('scanPoint', curFileTime)
-                    logger.debug('thread-monitor copy file is complete, filename: %s' % filename)
+                    logger.debug('thread-monitor send kafka and copy file is complete!')
 
             except Exception, e:
                 logger.error('deal_monitor_file is failed %s' % e.message)
 
     # ftp,数据库处理线程
-    def ftp_thread_proc(self, thread_id):
+    def ftp_thread_proc(self):
         while True:
             filename = QueueUtils.get_message('ftp')
             if filename:
                 try:
-                    logger.debug('thread-%d get queue msg : %s queue-size: %d' % (thread_id, filename, QueueUtils.get_queue('ftp').qsize()))
-                    wfxw = os.path.split(os.path.basename(filename))[1].split('_')[8]
-                    logger.debug('filename = %s, wfxw = %s' % (os.path.basename(filename), wfxw))
-                    if self.flag == '0':
-                        if wfxw in FrmStatus.data['wzxw'].keys():
-                         # 上传文件到宇视的ftp服务器
-                            ftp_path = VehPass.filename_format(os.path.basename(filename))
-                            logger.debug('thread-%d Ftp upload file: %s' % (thread_id, ftp_path))
-                            FtpUtils.upload_file(filename, '/' + ftp_path)
-                            logger.debug('thread-%d Ftp file: %s is upload complete!' % (thread_id, os.path.basename(filename)))
-                            # 写入宇视的数据库
-                            logger.debug('thread-%d insert database operator start!' % thread_id)
-                            VehPass.insert_data(filename)
-                            logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
                     
-                    else:
-                        ftp_path = VehPass.filename_format(os.path.basename(filename))
-                        logger.debug('thread-%d Ftp upload file: %s' % (thread_id, ftp_path))
-                        FtpUtils.upload_file(filename, '/' + ftp_path)
-                        logger.debug('thread-%d Ftp file: %s is upload complete!' % (thread_id, os.path.basename(filename)))
-                        # 写入宇视的数据库
-                        logger.debug('thread-%d insert database operator start!' % thread_id)
-                        VehPass.insert_data(filename)
-                        logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
-                   
+                    logger.debug('get queue msg : %s queue-size: %d' % (filename, QueueUtils.get_queue('ftp').qsize()))
+                    if os.path.basename(filename) in self.dict_filename.keys():             
+                        logger.debug('msg : %s ' % filename)
+                        # 上传文件到宇视的ftp服务器
+                        # ftp_path = VehPass.filename_format(os.path.basename())
+                        logger.debug('Ftp upload file: %s' % (self.dict_filename[os.path.basename(filename)]))
+                        FtpUtils.upload_file(filename, '/' + Scheduler.dict_filename[os.path.basename(filename)])
+                        self.count += 1
+                        logger.debug('Ftp file: %s is upload complete! count = %d' % (os.path.basename(filename), self.count))
+                        
                 except Exception, e:
-                    logger.error('thread-%d ftp upload failed %s, filename: %s' % (thread_id, e.message, filename))
+                    logger.error('ftp upload failed %s, filename: %s' % (e.message, filename))

@@ -42,6 +42,7 @@ class Scheduler(object):
         self.redis = RedisImpl(self.jsonObj['kakouFilter']['redis-cluster']['startup_nodes'])
         # 实例化kafka连接
         self.kafkaConn = KafkaImpl(self.jsonObj['kakouFilter']['kafka'])
+        self.flag = self.jsonObj['kakouFilter']['flag']
 
     def handler(self, signum, frame):
         self.is_exit = True
@@ -185,15 +186,28 @@ class Scheduler(object):
                 try:
                     if filename[-3:] == 'ini':
                         logger.debug('thread-%d get queue msg : %s queue-size: %d' % (thread_id, filename, QueueUtils.get_queue('ftp').qsize()))
-                        # 上传文件到宇视的ftp服务器
-                        ftp_path = VehPass.filename_format(filename)
-                        logger.debug('thread-%d Ftp upload file: %s' % (thread_id, ftp_path))
-                        FtpUtils.upload_file(filename[:-3] + 'jpg', '/' + ftp_path)
-                        logger.debug('thread-%d Ftp file: %s is upload complete!' % (thread_id, os.path.basename(filename)))
-                        # 写入宇视的数据库
-                        logger.debug('thread-%d insert database operator start!' % thread_id)
-                        VehPass.insert_data(filename)
-                        logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
+                        wfxw = os.path.basename(filename).split('_')[3]
+                        logger.debug('filename = %s, wfxw = %s, flag = %s' % (os.path.basename(filename), wfxw, self.flag))
+                        if self.flag == '0':
+                            if wfxw in FrmStatus.data['wzxw'].keys():
+                                # 上传文件到宇视的ftp服务器
+                                ftp_path = VehPass.filename_format(filename)
+                                logger.debug('thread-%d Ftp upload file: %s' % (thread_id, ftp_path))
+                                FtpUtils.upload_file(filename[:-3] + 'jpg', '/' + ftp_path)
+                                logger.debug('thread-%d Ftp file: %s is upload complete!' % (thread_id, os.path.basename(filename)))
+                                # 写入宇视的数据库
+                                logger.debug('thread-%d insert database operator start!' % thread_id)
+                                VehPass.insert_data(filename)
+                                logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
+                        else:
+                            ftp_path = VehPass.filename_format(filename)
+                            logger.debug('thread-%d Ftp upload file: %s' % (thread_id, ftp_path))
+                            FtpUtils.upload_file(filename[:-3] + 'jpg', '/' + ftp_path)
+                            logger.debug('thread-%d Ftp file: %s is upload complete!' % (thread_id, os.path.basename(filename)))
+                            # 写入宇视的数据库
+                            logger.debug('thread-%d insert database operator start!' % thread_id)
+                            VehPass.insert_data(filename)
+                            logger.debug('thread-%d insert database operator complete! filename: %s' % (thread_id, filename))
                 except Exception, e:
                     logger.error('thread-%d ftp upload failed %s, filename: %s' % (thread_id, e.message, filename))
 

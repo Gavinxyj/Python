@@ -47,3 +47,7 @@ class Connection(object):
             logger.error('cx_Oralce Error : %s' % (e.args[0], e.args[1]))
 
         return None
+
+    @staticmethod
+    def close_conn(str_type):
+        Connection._connMgr[str_type] = None

@@ -3,8 +3,8 @@
 import urllib
 import urllib2
 import re
-url = 'http://www.qiushibaike.com/'
-user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+url = 'https://www.t66y.com/thread0806.php?fid=16'
+user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
 headers = {'User-Agent': user_agent}
 try:
     request = urllib2.Request(url, headers = headers)
