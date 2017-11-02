@@ -3,7 +3,9 @@ from urllib import error
 import re
 import os
 from Excel import ExcelOper
-
+from SqliteImpl import SqliteImpl
+from MySQLImpl import MySQLImpl
+from SqlalchemyImpl import SqlalchemyImpl
 
 class Scheduler(object):
 
@@ -11,6 +13,9 @@ class Scheduler(object):
         self.url = url
         self.headers = {'User-Agent': user_agent}
         self.excel_obj = ExcelOper()
+        self.sqlite = SqliteImpl()
+        #self.mysql = MySQLImpl()
+        self.orm = SqlalchemyImpl()
 
     def read_html(self, codec):
         '''[read_html]
@@ -87,16 +92,17 @@ class Scheduler(object):
 
                                 request.urlretrieve('http:' + pictures[0], path + os.path.basename(pictures[0]))
                                 infos.append((userid, name, int(num), content, pictures[0]))
-                                #print((userid, name, num, content, pictures[0]))
-                                #self.write_file(userid + '\t' + name + '\t' + content + '\t' + num + '\t' + pictures[0])
 
                             else:
-                                #print((userid, name, content, num))
-                                infos.append((userid, name, int(num), content))
-                                #self.write_file(userid + '\t' + name + '\t' + content + '\t' + num)
+                                infos.append((userid, name, int(num), content, ' '))
+                               
                     except Exception as e:
                         print(e)
                 self.excel_obj.write_excel(infos)
+                #self.mysql.insert_record(infos)
+                #self.mysql.dump()
+                self.orm.insert_record(infos)
+                #self.orm.update_reocrd()
 
 if __name__ == '__main__':
   url = 'https://www.qiushibaike.com'
