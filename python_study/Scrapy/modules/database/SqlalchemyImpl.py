@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import sessionmaker
-from TableDef import Base, Qiubai
+from .TableDef import Base, Qiubai
 
 class SqlalchemyImpl(object):
     """docstring for SqlalchemyImpl"""
     def __init__(self):
-        #engine = create_engine('sqlite:///qiubai.db', convert_unicode=True, echo=True)   
-        engine = create_engine('mysql+pymysql://root:root@localhost/test?charset=utf8', convert_unicode=True, echo=True)   
+        engine = create_engine('sqlite:///qiubai.db', convert_unicode=True, echo=False)   
+        #engine = create_engine('mysql+pymysql://root:root@localhost/test?charset=utf8', convert_unicode=True, echo=True)   
 
         self.db_session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
         # Base.session = self.db_session
@@ -17,7 +17,8 @@ class SqlalchemyImpl(object):
         session = self.db_session()
         try:
             for item in items:
-                obj = Qiubai(item[0], item[1], item[2], item[3], item[4])
+                #obj = Qiubai(item[0], item[1], item[2], item[3], item[4])
+                obj = Qiubai(items)
                 #list_record.append(obj)
                 session.add(obj)
             session.commit()

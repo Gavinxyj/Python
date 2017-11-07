@@ -5,14 +5,15 @@ class SqliteImpl(object):
     def __init__(self):
         super(SqliteImpl, self).__init__()
         try:
-            self.conn = sqlite3.connect('sqlite.db')
+            self.conn = sqlite3.connect('sqlite.db', check_same_thread=False)
             create_table = '''CREATE TABLE IF NOT EXISTS QIUBAI
-                              (ID INT NOT NULL,
+                              (ID INTEGER PRIMARY KEY AUTOINCREMENT,
                                USERID   TEXT NOT NULL,
                                USERNAME TEXT NOT NULL,
                                FUNNY_NUM INT NOT NULL,
                                CONTENT TEXT,
-                               URL TEXT);
+                               URL TEXT
+                               );
                             '''
             self._cursor = self.conn.cursor()
             self._cursor.execute(create_table)
@@ -21,12 +22,11 @@ class SqliteImpl(object):
             raise e
         
 
-    def insert_record(self, infos):
+    def insert_record(self, info):
         try:
             sql = 'INSERT INTO QIUBAI(USERID, USERNAME, FUNNY_NUM, CONTENT, URL) VALUES(?, ?, ?, ?, ?)'
-           
-            #for info in infos:
-            self._cursor.executemany(sql, infos)
+            self._cursor = self.conn.cursor()
+            self._cursor.execute(sql, info)
             self.conn.commit()
             self._cursor.close()
         except Exception as e:

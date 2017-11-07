@@ -32,7 +32,8 @@ class MySQLImpl(object):
             sql = 'INSERT INTO QIUBAI(USERID, USERNAME, FUNNY_NUM, CONTENT, URL) VALUES(%s, %s, %s, %s, %s)'
             self._cursor = self.conn.cursor()
             # for info in infos:
-            self._cursor.executemany(sql, infos)
+            
+            self._cursor.execute(sql, infos)
             self.conn.commit()
             self._cursor.close()
         except Exception as e:
